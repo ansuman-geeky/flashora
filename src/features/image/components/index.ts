@@ -1,0 +1,5 @@
+/**
+ * Image Feature — Components
+ */
+
+export {};
