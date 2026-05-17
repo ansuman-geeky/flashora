@@ -77,12 +77,14 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           iCloudContainerEnvironment: 'Production',
         },
       ],
+      /*
       [
         '@react-native-firebase/app',
       ],
       [
         '@react-native-firebase/crashlytics',
       ],
+      */
       [
         'react-native-google-mobile-ads',
         {
