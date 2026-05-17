@@ -14,7 +14,7 @@
     "build:android": "eas build --platform android",
     "build:preview": "eas build --platform android --profile preview",
     "submit:android": "eas submit --platform android",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package && node scripts/postinstall.js"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.6.4",
