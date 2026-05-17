@@ -90,6 +90,16 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           iosAppId: process.env.ADMOB_IOS_APP_ID || 'ca-app-pub-3940256099942544~1458002511',
         },
       ],
+      [
+        'expo-build-properties',
+        {
+          android: {
+            packagingOptions: {
+              exclude: ['lib/riscv64/**'],
+            },
+          },
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
