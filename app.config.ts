@@ -37,7 +37,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         'android.permission.INTERNET',
         'android.permission.ACCESS_NETWORK_STATE',
       ],
-      googleServicesFile: hasGoogleServices ? './google-services.json' : process.env.GOOGLE_SERVICES_JSON,
+      // googleServicesFile: hasGoogleServices ? './google-services.json' : process.env.GOOGLE_SERVICES_JSON,
     },
     web: {
       bundler: 'metro',
