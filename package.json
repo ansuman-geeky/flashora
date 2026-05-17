@@ -18,10 +18,6 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "4.6.4",
-    "@react-native-firebase/analytics": "20.1.0",
-    "@react-native-firebase/app": "20.1.0",
-    "@react-native-firebase/crashlytics": "20.1.0",
-    "@react-native-firebase/remote-config": "20.1.0",
     "@react-native-ml-kit/text-recognition": "^2.0.0",
     "@shogobg/react-native-pdf": "1.1.5",
     "@shopify/react-native-skia": "1.2.3",
