@@ -18,7 +18,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 
 const CATEGORY_ORDER = ['pdf', 'qr', 'image', 'converter', 'url-shortener'];
 
-export function CategoryStrip() {
+export const CategoryStrip = React.memo(function CategoryStrip() {
   const router = useRouter();
   const { colors } = useTheme();
 
@@ -53,4 +53,4 @@ export function CategoryStrip() {
       </ScrollView>
     </View>
   );
-}
+});

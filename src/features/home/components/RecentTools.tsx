@@ -5,7 +5,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Clock, FileText, QrCode, ImageIcon, Repeat2, Link2, type LucideIcon } from 'lucide-react-native';
+import { Clock, FileText, QrCode, ImageIcon, Repeat2, Link2, ScanLine, type LucideIcon } from 'lucide-react-native';
 import { SectionHeader } from '@components/SectionHeader';
 import { Card } from '@components/Card';
 import { EmptyState } from '@components/EmptyState';
@@ -22,9 +22,10 @@ const CATEGORY_ICONS: Record<ToolCategory, LucideIcon> = {
   image: ImageIcon,
   converter: Repeat2,
   'url-shortener': Link2,
+  scanner: ScanLine,
 };
 
-export function RecentTools() {
+export const RecentTools = React.memo(function RecentTools() {
   const router = useRouter();
   const recentTools = useRecentTools(6);
 
@@ -88,4 +89,4 @@ export function RecentTools() {
       )}
     </View>
   );
-}
+});

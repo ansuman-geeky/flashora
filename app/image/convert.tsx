@@ -17,7 +17,7 @@ import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
 import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
 import type { FileInfo } from '@utils/fileUtils';
-import type { ImageFormat } from '../types';
+import type { ImageFormat } from '@features/image/types';
 
 const FORMATS: ImageFormat[] = ['jpeg', 'png', 'webp'];
 

@@ -3,7 +3,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { View, ScrollView, Text, Clipboard } from 'react-native';
+import { View, ScrollView, Text, Clipboard, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from '@components/ScreenHeader';
 import { Button } from '@components/Button';
@@ -11,13 +11,13 @@ import { Input } from '@components/Input';
 import { Card } from '@components/Card';
 import { ErrorDisplay } from '@components/ErrorDisplay';
 import { ProcessingView } from '@features/pdf/components';
-import { QrResultCard } from '@features/qr/components/QrResultCard';
+import { QrGenerator } from '@features/qr/components/QrGenerator';
 import { urlShortenerService, type ShortenResult } from '@features/url-shortener/services/urlShortenerService';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
+import { Colors } from '@design-system/tokens';
 import { useRouter } from 'expo-router';
 import { Copy, Share2 } from 'lucide-react-native';
-import * as Sharing from 'expo-sharing';
 
 export default function UrlShortenerScreen() {
   const router = useRouter();
@@ -49,7 +49,14 @@ export default function UrlShortenerScreen() {
 
   const handleShare = useCallback(async () => {
     if (result) {
-      await Sharing.shareAsync(result.shortUrl);
+      try {
+        await Share.share({
+          message: result.shortUrl,
+          url: result.shortUrl, // iOS support
+        });
+      } catch (error) {
+        console.error('Sharing failed:', error);
+      }
     }
   }, [result]);
 
@@ -102,15 +109,16 @@ export default function UrlShortenerScreen() {
               <Text className="text-xs text-text-tertiary mb-1">Shortened URL</Text>
               <View className="flex-row items-center gap-2 mb-4">
                 <Text className="flex-1 text-lg font-bold text-primary">{result.shortUrl}</Text>
-                <Button variant="ghost" size="sm" onPress={handleCopy} icon={<Copy size={16} color={colors.primary} />} />
+                <Button label="" variant="ghost" size="sm" onPress={handleCopy} leftIcon={<Copy size={16} color={Colors.urlShortener} />} />
               </View>
 
-              <Button label="Share Link" variant="outline" onPress={handleShare} icon={<Share2 size={18} color={colors.primary} />} />
+              <Button label="Share Link" variant="outline" onPress={handleShare} leftIcon={<Share2 size={18} color={Colors.urlShortener} />} />
             </Card>
 
             <Text className="text-sm font-bold text-text-primary dark:text-text-primary-dark mx-2 mb-2 mt-4">QR Code for Link</Text>
-            <QrResultCard 
+            <QrGenerator 
               value={result.shortUrl} 
+              onReset={handleReset}
               onBackToTools={() => router.replace('/(tabs)/tools')} 
             />
             

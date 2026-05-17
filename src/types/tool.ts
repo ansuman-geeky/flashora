@@ -3,7 +3,7 @@
  */
 
 /** Tool categories mapping to feature modules */
-export type ToolCategory = 'pdf' | 'qr' | 'image' | 'converter' | 'url-shortener';
+export type ToolCategory = 'pdf' | 'qr' | 'image' | 'converter' | 'url-shortener' | 'scanner';
 
 /** Individual tool definition used throughout the app */
 export interface Tool {

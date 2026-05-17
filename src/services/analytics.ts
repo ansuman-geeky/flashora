@@ -15,7 +15,15 @@ export type FlashoraEvent =
   | 'ad_click'
   | 'premium_view'
   | 'premium_click'
-  | 'premium_upgrade';
+  | 'premium_upgrade'
+  | 'scanner_open'
+  | 'scanner_capture'
+  | 'scanner_edge_auto'
+  | 'scanner_edge_manual'
+  | 'scanner_enhance'
+  | 'scanner_export'
+  | 'scanner_export_gate'
+  | 'scanner_failure';
 
 /** Event parameter types */
 export interface EventParams {
@@ -28,6 +36,14 @@ export interface EventParams {
   premium_view: undefined;
   premium_click: { plan: 'monthly' | 'yearly' };
   premium_upgrade: { plan: 'monthly' | 'yearly'; revenue_inr: number };
+  scanner_open: undefined;
+  scanner_capture: undefined;
+  scanner_edge_auto: undefined;
+  scanner_edge_manual: undefined;
+  scanner_enhance: undefined;
+  scanner_export: { format: string; quality: string; page_count: number };
+  scanner_export_gate: { format: string };
+  scanner_failure: { error_code: string };
 }
 
 /**

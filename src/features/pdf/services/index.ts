@@ -13,7 +13,6 @@ export {
   splitPdf,
   compressPdf,
   imagesToPdf,
-  pdfToImages,
   reorderPdf,
   passwordProtectPdf,
   shareFile,

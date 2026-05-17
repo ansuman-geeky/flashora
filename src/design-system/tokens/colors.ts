@@ -48,6 +48,7 @@ export const Colors = {
   image: '#F59E0B',
   converter: '#3B82F6',
   urlShortener: '#00C98D',
+  scanner: '#0EA5E9',
 } as const;
 
 export type ColorToken = keyof typeof Colors;

@@ -18,15 +18,14 @@ import { ToolCard } from '@components/ToolCard';
 import { Colors } from '@design-system/tokens';
 import { logEvent } from '@services/analytics';
 
-/** Curated quick actions — most valuable tools front and center */
 const QUICK_ACTIONS = [
+  { id: 'scanner', name: 'Doc Scanner', icon: ScanLine, color: Colors.scanner, route: '/scanner/camera' },
   { id: 'pdf_merge', name: 'Merge PDF', icon: FilePlus2, color: Colors.pdf, route: '/pdf/merge' },
   { id: 'qr_scan', name: 'Scan QR', icon: ScanLine, color: Colors.qr, route: '/qr/scan' },
-  { id: 'image_compress', name: 'Compress', icon: Minimize2, color: Colors.image, route: '/image/compress' },
   { id: 'url_shorten', name: 'Shorten URL', icon: Link2, color: Colors.urlShortener, route: '/url-shortener/shorten' },
 ] as const;
 
-export function QuickActions() {
+export const QuickActions = React.memo(function QuickActions() {
   const router = useRouter();
 
   const handlePress = (id: string, route: string) => {
@@ -60,4 +59,4 @@ export function QuickActions() {
       </ScrollView>
     </View>
   );
-}
+});

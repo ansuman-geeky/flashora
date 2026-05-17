@@ -12,7 +12,17 @@
  * For now, logs to console in development.
  */
 export function recordError(error: unknown, context?: string): void {
-  const errorObj = error instanceof Error ? error : new Error(String(error));
+  let errorObj: Error;
+  
+  if (error instanceof Error) {
+    errorObj = error;
+  } else if (typeof error === 'object' && error !== null) {
+    // Handle plain objects with message property (common in JS/Native errors)
+    const msg = (error as any).message || JSON.stringify(error);
+    errorObj = new Error(msg);
+  } else {
+    errorObj = new Error(String(error));
+  }
 
   if (__DEV__) {
     console.error(`[Crashlytics] ${context ?? 'Unknown context'}:`, errorObj);

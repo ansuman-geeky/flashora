@@ -9,6 +9,17 @@ import { Colors } from '@design-system/tokens';
 import type { Tool } from '@app-types/tool';
 
 export const TOOLS: Tool[] = [
+  {
+    id: 'scanner',
+    name: 'Doc Scanner',
+    icon: 'scan-line',
+    category: 'scanner',
+    color: Colors.scanner,
+    route: '/scanner/camera',
+    description: 'Scan docs, books & receipts',
+    isPremium: false,
+  },
+
   // --- PDF Tools ---
   {
     id: 'pdf_merge',
@@ -50,16 +61,7 @@ export const TOOLS: Tool[] = [
     description: 'Convert images into a PDF document',
     isPremium: false,
   },
-  {
-    id: 'pdf_pdf_to_image',
-    name: 'PDF to Image',
-    icon: 'file-image',
-    category: 'pdf',
-    color: Colors.pdf,
-    route: '/pdf/pdf-to-image',
-    description: 'Extract pages as images from a PDF',
-    isPremium: false,
-  },
+
   {
     id: 'pdf_reorder',
     name: 'Reorder Pages',
@@ -210,6 +212,7 @@ export const CATEGORY_META: Record<
   string,
   { label: string; icon: string; color: string }
 > = {
+  scanner: { label: 'Doc Scanner', icon: 'scan-line', color: Colors.scanner },
   pdf: { label: 'PDF Tools', icon: 'file-text', color: Colors.pdf },
   qr: { label: 'QR Tools', icon: 'qr-code', color: Colors.qr },
   image: { label: 'Image Tools', icon: 'image', color: Colors.image },

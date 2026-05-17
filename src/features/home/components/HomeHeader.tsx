@@ -3,8 +3,8 @@
  */
 
 import React from 'react';
-import { View, Text } from 'react-native';
-import { Zap, Search, X } from 'lucide-react-native';
+import { View, Text, Image } from 'react-native';
+import { Search, X } from 'lucide-react-native';
 import { Colors } from '@design-system/tokens';
 import { Input } from '@components/Input';
 import { IconButton } from '@components/IconButton';
@@ -27,12 +27,14 @@ export function HomeHeader({
       {/* Branding row */}
       <View className="flex-row items-center justify-between mb-2">
         <View className="flex-row items-center">
-          <View className="w-[36px] h-[36px] rounded-md bg-primary items-center justify-center">
-            <Zap size={20} color="#FFFFFF" fill="#FFFFFF" />
-          </View>
-          <View className="ml-1.5">
-            <Text className="text-xl font-bold text-text-primary dark:text-text-primary-dark">
-              Flashora
+          <Image
+            source={require('../../../../assets/header-icon.png')}
+            className="w-14 h-14 rounded-2xl"
+            resizeMode="contain"
+          />
+          <View className="ml-3 justify-center">
+            <Text className="text-lg font-bold text-text-primary dark:text-text-primary-dark">
+              Flashora-Scanner & PDF Tools
             </Text>
             <Text className="text-xs text-text-tertiary dark:text-text-secondary-dark">
               Fast. Smart. Utility.

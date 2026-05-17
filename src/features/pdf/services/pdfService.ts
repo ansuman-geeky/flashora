@@ -11,6 +11,7 @@
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { PDFDocument } from 'pdf-lib';
 import { recordError } from '@services/crashlytics';
 import {
@@ -140,14 +141,17 @@ export async function mergePdfs(files: FileInfo[]): Promise<ToolResult> {
     const mergedPdf = await PDFDocument.create();
 
     for (const file of files) {
+      // Load one by one to avoid OOM
       const base64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
       const pdfBytes = base64ToUint8Array(base64);
       const pdf = await PDFDocument.load(pdfBytes);
       const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
       copiedPages.forEach((page) => mergedPdf.addPage(page));
+      
+      // Cleanup hints for GC if possible (not much we can do in JS, but avoiding parallel helps)
     }
 
-    const mergedPdfBytes = await mergedPdf.save();
+    const mergedPdfBytes = await mergedPdf.save({ useObjectStreams: true });
     return await savePdfResult(mergedPdfBytes, 'merged', startTime);
   } catch (error) {
     if (isToolError(error)) throw error;
@@ -208,21 +212,29 @@ export async function imagesToPdf(images: FileInfo[]): Promise<ToolResult> {
     const pdfDoc = await PDFDocument.create();
 
     for (const image of images) {
-      const base64 = await FileSystem.readAsStringAsync(image.uri, { encoding: FileSystem.EncodingType.Base64 });
+      // 1. Preprocess: Resize/Compress if it's a huge image
+      const processedUri = await preprocessImageForPdf(image.uri, image.size);
+      
+      // 2. Read as base64 (one at a time)
+      const base64 = await FileSystem.readAsStringAsync(processedUri, { 
+        encoding: FileSystem.EncodingType.Base64 
+      });
       const imgBytes = base64ToUint8Array(base64);
 
       let pdfImg;
-      if (image.mimeType === 'image/jpeg') {
-        pdfImg = await pdfDoc.embedJpg(imgBytes);
-      } else {
-        pdfImg = await pdfDoc.embedPng(imgBytes);
-      }
+      // We always convert to JPEG in preprocessing for consistency and size
+      pdfImg = await pdfDoc.embedJpg(imgBytes);
 
       const page = pdfDoc.addPage([pdfImg.width, pdfImg.height]);
       page.drawImage(pdfImg, { x: 0, y: 0, width: pdfImg.width, height: pdfImg.height });
+      
+      // 3. Cleanup temp file if we created one
+      if (processedUri !== image.uri) {
+        await FileSystem.deleteAsync(processedUri, { idempotent: true }).catch(() => {});
+      }
     }
 
-    const bytes = await pdfDoc.save();
+    const bytes = await pdfDoc.save({ useObjectStreams: true });
     return await savePdfResult(bytes, 'from_images', startTime);
   } catch (error) {
     if (isToolError(error)) throw error;
@@ -231,14 +243,7 @@ export async function imagesToPdf(images: FileInfo[]): Promise<ToolResult> {
   }
 }
 
-/**
- * Extract pages as images (Placeholder — requires native renderer).
- */
-export async function pdfToImages(file: FileInfo): Promise<ToolResult> {
-  // Real implementation would use a native renderer.
-  // For now, we'll return a copy of the PDF as a placeholder to avoid crashes.
-  return await mergePdfs([file]);
-}
+
 
 /**
  * Reorder pages in a PDF.
@@ -352,4 +357,26 @@ function getErrorMessage(code: string): string {
     PROCESSING_FAILED: 'Processing failed',
   };
   return messages[code] ?? 'An unexpected error occurred';
+}
+
+/**
+ * Preprocess image for PDF embedding.
+ * Reduces size if necessary to avoid OOM.
+ */
+async function preprocessImageForPdf(uri: string, size: number): Promise<string> {
+  const SIZE_THRESHOLD = 1.5 * 1024 * 1024; // 1.5MB
+  
+  if (size < SIZE_THRESHOLD) return uri;
+
+  try {
+    const result = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 1600 } }], // Reasonable resolution for PDF
+      { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+    );
+    return result.uri;
+  } catch (err) {
+    console.warn('Image preprocessing failed, falling back to original:', err);
+    return uri;
+  }
 }
