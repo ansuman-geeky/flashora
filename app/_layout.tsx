@@ -7,6 +7,8 @@
  * - Global NativeWind CSS import
  */
 
+import 'react-native-worklets-core';
+import 'react-native-gesture-handler';
 import '../global.css';
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
