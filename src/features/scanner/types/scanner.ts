@@ -41,6 +41,7 @@ export interface ExportOptions {
   format:   ExportFormat;
   quality:  ExportQuality;
   fileName: string;
+  searchable?: boolean;
 }
 
 export interface ScannerState {

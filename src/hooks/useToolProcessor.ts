@@ -5,12 +5,14 @@
  * Every tool screen uses this pattern.
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { ToolProcessingStatus, ToolError, ToolResult } from '@app-types/tool';
 import { logEvent } from '@services/analytics';
 import { recordError } from '@services/crashlytics';
 import { useHistoryStore } from '@store/useHistoryStore';
 import { useAds } from '@hooks/useAds';
+import { usePremiumStore } from '@store/usePremiumStore';
+import * as FileSystem from 'expo-file-system';
 
 interface UseToolProcessorOptions {
   toolId: string;
@@ -36,12 +38,41 @@ export function useToolProcessor({
   const [result, setResult] = useState<ToolResult | null>(null);
   const [progress, setProgress] = useState(0);
   const isMounted = useRef(true);
+  const resultRef = useRef<ToolResult | null>(null);
 
   const addHistoryEntry = useHistoryStore((s) => s.addEntry);
   const { tryShowInterstitial } = useAds();
+  const canPerformPdfOp = usePremiumStore((s) => s.canPerformPdfOp);
+  const incrementPdfOps = usePremiumStore((s) => s.incrementPdfOps);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      // Cleanup files on unmount
+      if (resultRef.current && resultRef.current.outputUris) {
+        resultRef.current.outputUris.forEach((uri) => {
+          if (uri.startsWith(FileSystem.cacheDirectory || 'file://')) {
+            FileSystem.deleteAsync(uri, { idempotent: true }).catch((err) => {
+              if (__DEV__) console.warn('[useToolProcessor] Cache cleanup failed on unmount:', err);
+            });
+          }
+        });
+      }
+    };
+  }, []);
 
   const execute = useCallback(async (processFn: () => Promise<ToolResult>) => {
     if (!isMounted.current) return;
+
+    if (category === 'pdf' && !canPerformPdfOp()) {
+      setStatus('failed');
+      setError({
+        code: 'PREMIUM_REQUIRED',
+        message: 'You have reached your daily limit of 5 free PDF operations. Upgrade to Premium for unlimited access.',
+      });
+      return;
+    }
 
     setStatus('processing');
     setError(null);
@@ -53,7 +84,12 @@ export function useToolProcessor({
 
       if (!isMounted.current) return;
 
+      if (category === 'pdf') {
+        incrementPdfOps();
+      }
+
       setResult(toolResult);
+      resultRef.current = toolResult;
       setStatus('completed');
       setProgress(100);
 
@@ -113,9 +149,21 @@ export function useToolProcessor({
   }, [toolId, toolName, category, addHistoryEntry, tryShowInterstitial]);
 
   const reset = useCallback(() => {
+    // Cleanup temporary output files if they exist in cache directory
+    if (resultRef.current && resultRef.current.outputUris) {
+      resultRef.current.outputUris.forEach((uri) => {
+        if (uri.startsWith(FileSystem.cacheDirectory || 'file://')) {
+          FileSystem.deleteAsync(uri, { idempotent: true }).catch((err) => {
+            if (__DEV__) console.warn('[useToolProcessor] Cache cleanup failed on reset:', err);
+          });
+        }
+      });
+    }
+
     setStatus('idle');
     setError(null);
     setResult(null);
+    resultRef.current = null;
     setProgress(0);
   }, []);
 

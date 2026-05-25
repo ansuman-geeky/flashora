@@ -42,7 +42,8 @@ export type ToolErrorCode =
   | 'STORAGE_FULL'
   | 'PERMISSION_DENIED'
   | 'NETWORK_ERROR'
-  | 'PROCESSING_FAILED';
+  | 'PROCESSING_FAILED'
+  | 'PREMIUM_REQUIRED';
 
 /** Structured error for tool operations */
 export interface ToolError {

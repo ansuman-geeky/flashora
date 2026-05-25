@@ -16,6 +16,8 @@ export {
   getAdUnitIds,
   canShowAppOpenAd,
   markAppOpenAdShown,
+  initAds,
+  loadAndShowAppOpenAd,
 } from './adService';
 export type { AdType } from './adService';
 

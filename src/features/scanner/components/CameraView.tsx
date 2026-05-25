@@ -1,6 +1,6 @@
 import React, { useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Camera, useCameraDevice, useCameraPermission, PhotoFile, FrameProcessor } from 'react-native-vision-camera';
+import { Camera, useCameraDevice, useCameraPermission, PhotoFile } from 'react-native-vision-camera';
 
 export interface CameraViewRef {
   takePhoto: () => Promise<PhotoFile | undefined>;
@@ -9,7 +9,7 @@ export interface CameraViewRef {
 interface CameraViewProps {
   flashMode: 'on' | 'off' | 'auto';
   isActive: boolean;
-  frameProcessor?: FrameProcessor;
+  frameProcessor?: any;
 }
 
 export const CameraView = forwardRef<CameraViewRef, CameraViewProps>(({ flashMode, isActive, frameProcessor }, ref) => {
@@ -56,6 +56,6 @@ export const CameraView = forwardRef<CameraViewRef, CameraViewProps>(({ flashMod
 });
 
 const styles = StyleSheet.create({
-  placeholder: { flex: 1, backgroundColor: '#000', items: 'center', justifyContent: 'center' },
+  placeholder: { flex: 1, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' },
   text: { color: '#FFF' }
 });

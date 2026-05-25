@@ -10,6 +10,8 @@
 import React from 'react';
 import { View, Text, type ViewStyle } from 'react-native';
 import { Button, type ButtonProps } from './Button';
+import { useTheme } from '@hooks/useTheme';
+import { Colors } from '@design-system/tokens';
 
 export interface EmptyStateProps {
   /** Lucide icon component to display */
@@ -38,6 +40,8 @@ export function EmptyState({
   className = '',
   style,
 }: EmptyStateProps) {
+  const { isDark } = useTheme();
+
   return (
     <View
       className={`
@@ -48,7 +52,10 @@ export function EmptyState({
       accessibilityRole="text"
     >
       {/* Icon container with muted background circle */}
-      <View className="w-[72px] h-[72px] rounded-full bg-primary-muted dark:bg-border-dark items-center justify-center mb-3">
+      <View
+        className="w-[72px] h-[72px] rounded-full items-center justify-center mb-3"
+        style={{ backgroundColor: isDark ? Colors.surfaceRaisedDark : Colors.primaryMuted }}
+      >
         {icon}
       </View>
 

@@ -40,7 +40,7 @@ export default function ExportScreen() {
   const { session, reorderPages, clearSession } = useScannerStore();
   
   const [selectedFormat, setSelectedFormat] = useState<ExportFormatId>('pdf');
-  const [fileName, setFileName] = useState(`Scan_${new Date().toISOString().split('T')[0].replace(/-/g, '_')}`);
+  const [fileName, setFileName] = useState(`Scan_${(new Date().toISOString().split('T')[0] ?? '').replace(/-/g, '_')}`);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -79,7 +79,7 @@ export default function ExportScreen() {
         const uri = await exportToPdf(pages, { 
           fileName, 
           format: 'pdf', 
-          quality: 1,
+          quality: 'high',
           searchable: searchable && ocrStatus === 'completed'
         });
         if (await Sharing.isAvailableAsync()) {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   thumbImage: { width: '100%', height: '100%', resizeMode: 'cover' },
   badgeCount: { position: 'absolute', top: 8, left: 8, width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center' },
   badgeText: { color: '#FFF', fontSize: 10, fontWeight: '800' },
-  addPageBtn: { width: 100, height: 140, borderRadius: 12, borderWeight: 2, borderStyle: 'dashed', borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.03)' },
+  addPageBtn: { width: 100, height: 140, borderRadius: 12, borderWidth: 2, borderStyle: 'dashed', borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.03)' },
   addText: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '600' },
   ocrBanner: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginBottom: 24, padding: 12, borderRadius: 12, backgroundColor: 'rgba(59, 169, 255, 0.08)', gap: 10 },
   ocrBannerDone: { backgroundColor: 'rgba(34, 197, 94, 0.08)' },

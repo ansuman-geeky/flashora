@@ -1,12 +1,14 @@
 /**
- * useTheme — resolves the current theme based on user preference and system setting
+ * useTheme — resolves the current theme based on user preference
+ *
+ * Only supports 'light' and 'dark'. System theme removed.
  */
 
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
-import { useColorScheme as useSystemColorScheme } from 'react-native';
 import { useAppStore } from '@store/useAppStore';
 import { Colors } from '@design-system/tokens';
 import { useEffect } from 'react';
+import { Appearance } from 'react-native';
 
 export type ResolvedTheme = 'light' | 'dark';
 
@@ -30,16 +32,15 @@ export function useTheme(): {
   isDark: boolean;
 } {
   const themeMode = useAppStore((s) => s.themeMode);
-  const systemScheme = useSystemColorScheme();
   const { setColorScheme } = useNativeWindColorScheme();
 
-  const resolved: ResolvedTheme =
-    themeMode === 'system'
-      ? (systemScheme ?? 'light')
-      : themeMode;
+  const resolved: ResolvedTheme = themeMode === 'dark' ? 'dark' : 'light';
 
   useEffect(() => {
     setColorScheme(resolved);
+    if (Appearance.getColorScheme() !== resolved) {
+      Appearance.setColorScheme(resolved);
+    }
   }, [resolved, setColorScheme]);
 
   const isDark = resolved === 'dark';

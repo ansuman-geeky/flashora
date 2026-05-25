@@ -1,13 +1,8 @@
-/**
- * Ad Service — AdMob manager
- *
- * Centralizes all ad loading, showing, and frequency capping logic.
- * Uses test IDs in development, real IDs from .env in production.
- */
-
 import { AD_UNITS, INTERSTITIAL_FREQUENCY, APP_OPEN_AD_COOLDOWN_HOURS } from '@constants/adUnits';
 import { logEvent } from './analytics';
 import { recordError } from './crashlytics';
+import { InterstitialAd, RewardedAd, AppOpenAd, AdEventType, RewardedAdEventType } from 'react-native-google-mobile-ads';
+import { usePremiumStore } from '@store/usePremiumStore';
 
 /** Ad types supported by Flashora */
 export type AdType = 'app_open' | 'native_banner' | 'interstitial' | 'rewarded';
@@ -15,6 +10,81 @@ export type AdType = 'app_open' | 'native_banner' | 'interstitial' | 'rewarded';
 /** Internal state for frequency capping */
 let toolActionCount = 0;
 let lastAppOpenAdTime = 0;
+
+let interstitialAd: InterstitialAd | null = null;
+let rewardedAd: RewardedAd | null = null;
+let appOpenAd: AppOpenAd | null = null;
+
+/**
+ * Show App Open Ad on cold start or when returning to foreground.
+ */
+export function loadAndShowAppOpenAd(): void {
+  try {
+    const isPremium = usePremiumStore.getState().tier === 'premium';
+    if (isPremium) return;
+
+    if (!canShowAppOpenAd()) {
+      return;
+    }
+
+    appOpenAd = AppOpenAd.createForAdRequest(AD_UNITS.APP_OPEN, {
+      requestNonPersonalizedAdsOnly: true,
+    });
+
+    const unsubscribeLoaded = appOpenAd.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        if (__DEV__) console.log('[AdService] App Open Ad loaded, showing...');
+        appOpenAd?.show();
+        markAppOpenAdShown();
+        logEvent('ad_impression', { ad_type: 'app_open' });
+      }
+    );
+
+    const unsubscribeError = appOpenAd.addAdEventListener(
+      AdEventType.ERROR,
+      (error) => {
+        if (__DEV__) console.warn('[AdService] App Open Ad failed to load:', error);
+        unsubscribeLoaded();
+        unsubscribeError();
+      }
+    );
+
+    appOpenAd.load();
+  } catch (error) {
+    recordError(error, 'AdService.loadAndShowAppOpenAd');
+  }
+}
+
+/**
+ * Initialize preloaded ads.
+ */
+export function initAds(): void {
+  try {
+    const isPremium = usePremiumStore.getState().tier === 'premium';
+    
+    // Load App Open Ad on startup
+    loadAndShowAppOpenAd();
+
+    if (isPremium) return;
+
+    interstitialAd = InterstitialAd.createForAdRequest(AD_UNITS.INTERSTITIAL, {
+      requestNonPersonalizedAdsOnly: true,
+    });
+    interstitialAd.load();
+
+    rewardedAd = RewardedAd.createForAdRequest(AD_UNITS.REWARDED, {
+      requestNonPersonalizedAdsOnly: true,
+    });
+    rewardedAd.load();
+    
+    if (__DEV__) {
+      console.log('[AdService] Preloading ads initiated');
+    }
+  } catch (error) {
+    recordError(error, 'AdService.initAds');
+  }
+}
 
 /**
  * Track a tool action completion for interstitial frequency capping.
@@ -50,8 +120,6 @@ export function markAppOpenAdShown(): void {
 
 /**
  * Show an interstitial ad if frequency cap allows.
- *
- * Implementation will be wired to react-native-google-mobile-ads in Step 12.
  */
 export async function showInterstitial(): Promise<boolean> {
   try {
@@ -59,14 +127,30 @@ export async function showInterstitial(): Promise<boolean> {
       return false;
     }
 
-    // Ad loading/showing will be wired in Step 12
-    if (__DEV__) {
-      console.log(`[AdService] Would show interstitial: ${AD_UNITS.INTERSTITIAL}`);
+    if (!interstitialAd) {
+      initAds();
     }
 
-    logEvent('ad_impression', { ad_type: 'interstitial' });
-    resetToolActionCount();
-    return true;
+    if (interstitialAd && interstitialAd.loaded) {
+      await interstitialAd.show();
+      resetToolActionCount();
+      logEvent('ad_impression', { ad_type: 'interstitial' });
+      
+      // Reload for next time
+      interstitialAd = InterstitialAd.createForAdRequest(AD_UNITS.INTERSTITIAL, {
+        requestNonPersonalizedAdsOnly: true,
+      });
+      interstitialAd.load();
+      return true;
+    } else {
+      if (interstitialAd) {
+        interstitialAd.load();
+      }
+      if (__DEV__) {
+        console.log('[AdService] Interstitial not loaded yet');
+      }
+      return false;
+    }
   } catch (error) {
     recordError(error, 'AdService.showInterstitial');
     return false;
@@ -75,22 +159,83 @@ export async function showInterstitial(): Promise<boolean> {
 
 /**
  * Show a rewarded ad. Returns true if the user completed watching.
- *
- * Implementation will be wired in Step 12.
  */
 export async function showRewarded(): Promise<boolean> {
-  try {
-    // Ad loading/showing will be wired in Step 12
-    if (__DEV__) {
-      console.log(`[AdService] Would show rewarded: ${AD_UNITS.REWARDED}`);
-    }
+  return new Promise((resolve) => {
+    try {
+      if (!rewardedAd) {
+        initAds();
+      }
 
-    logEvent('ad_impression', { ad_type: 'rewarded' });
-    return true;
-  } catch (error) {
-    recordError(error, 'AdService.showRewarded');
-    return false;
-  }
+      if (rewardedAd && rewardedAd.loaded) {
+        const unsubscribeEarned = rewardedAd.addAdEventListener(
+          RewardedAdEventType.EARNED_REWARD,
+          (reward) => {
+            if (__DEV__) console.log('[AdService] User earned reward:', reward);
+            logEvent('ad_impression', { ad_type: 'rewarded' });
+            resolve(true);
+          }
+        );
+
+        const unsubscribeClosed = rewardedAd.addAdEventListener(
+          AdEventType.CLOSED,
+          () => {
+            unsubscribeEarned();
+            unsubscribeClosed();
+            rewardedAd = RewardedAd.createForAdRequest(AD_UNITS.REWARDED, {
+              requestNonPersonalizedAdsOnly: true,
+            });
+            rewardedAd.load();
+            resolve(false);
+          }
+        );
+
+        rewardedAd.show();
+      } else {
+        if (rewardedAd) {
+          rewardedAd.load();
+        }
+        
+        let checkCount = 0;
+        const interval = setInterval(() => {
+          checkCount++;
+          if (rewardedAd && rewardedAd.loaded) {
+            clearInterval(interval);
+            
+            const unsubscribeEarned = rewardedAd.addAdEventListener(
+              RewardedAdEventType.EARNED_REWARD,
+              () => {
+                logEvent('ad_impression', { ad_type: 'rewarded' });
+                resolve(true);
+              }
+            );
+
+            const unsubscribeClosed = rewardedAd.addAdEventListener(
+              AdEventType.CLOSED,
+              () => {
+                unsubscribeEarned();
+                unsubscribeClosed();
+                rewardedAd = RewardedAd.createForAdRequest(AD_UNITS.REWARDED, {
+                  requestNonPersonalizedAdsOnly: true,
+                });
+                rewardedAd.load();
+                resolve(false);
+              }
+            );
+
+            rewardedAd.show();
+          } else if (checkCount >= 6) { // 3 seconds timeout for better UX
+            clearInterval(interval);
+            if (__DEV__) console.log('[AdService] Rewarded ad load timeout');
+            resolve(false);
+          }
+        }, 500);
+      }
+    } catch (error) {
+      recordError(error, 'AdService.showRewarded');
+      resolve(false);
+    }
+  });
 }
 
 /**

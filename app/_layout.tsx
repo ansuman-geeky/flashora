@@ -10,6 +10,17 @@
 import 'react-native-worklets-core';
 import 'react-native-gesture-handler';
 import '../global.css';
+
+// Polyfill TextEncoder and TextDecoder for pdf-lib on device
+// @ts-ignore
+import { TextEncoder, TextDecoder } from 'text-encoding';
+if (typeof global.TextEncoder === 'undefined') {
+  (global as any).TextEncoder = TextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+  (global as any).TextDecoder = TextDecoder;
+}
+
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -17,6 +28,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useTheme } from '@hooks/useTheme';
+import mobileAds from 'react-native-google-mobile-ads';
+import { initAds } from '@services/adService';
+import { initRemoteConfig } from '@services/remoteConfig';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -28,9 +42,22 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // Pre-load fonts, make any API calls you need to do here
-        // Simulated delay for demo/preparation if needed
-        // await new Promise(resolve => setTimeout(resolve, 500));
+        // Initialize AdMob
+        try {
+          await mobileAds().initialize();
+          initAds();
+          console.log('[AdMob] Initialized successfully and pre-loading ads');
+        } catch (adError) {
+          console.warn('[AdMob] Initialization failed:', adError);
+        }
+
+        // Initialize Firebase Remote Config
+        try {
+          await initRemoteConfig();
+          console.log('[RemoteConfig] Initialized successfully');
+        } catch (rcError) {
+          console.warn('[RemoteConfig] Initialization failed:', rcError);
+        }
       } catch (e) {
         console.warn(e);
       } finally {

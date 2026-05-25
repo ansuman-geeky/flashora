@@ -46,11 +46,10 @@ export interface EventParams {
   scanner_failure: { error_code: string };
 }
 
+import analytics from '@react-native-firebase/analytics';
+
 /**
  * Log an analytics event.
- *
- * Implementation will be wired to @react-native-firebase/analytics in Step 13.
- * For now, this is a typed stub that logs to console in development.
  */
 export function logEvent<T extends FlashoraEvent>(
   event: T,
@@ -59,5 +58,11 @@ export function logEvent<T extends FlashoraEvent>(
   if (__DEV__) {
     console.log(`[Analytics] ${event}`, params ?? '');
   }
-  // Firebase analytics will be wired here in Step 13
+  try {
+    void analytics().logEvent(event, params ?? {});
+  } catch (error) {
+    if (__DEV__) {
+      console.warn('[Analytics] Failed to log event to Firebase:', error);
+    }
+  }
 }

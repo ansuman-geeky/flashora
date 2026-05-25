@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   label: {
-    ...ScannerTypography.sectionLabel,
+    ...(ScannerTypography.sectionLabel as any),
     paddingHorizontal: 18,
     marginBottom: 10,
   },

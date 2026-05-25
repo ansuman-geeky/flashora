@@ -22,7 +22,8 @@ jest.mock('pdf-lib', () => ({
     create: jest.fn().mockResolvedValue({
       embedJpg: jest.fn().mockResolvedValue({ scaleToFit: () => ({ width: 100, height: 100 }) }),
       addPage: jest.fn().mockReturnValue({ drawImage: jest.fn() }),
-      saveAsBase64: jest.fn().mockResolvedValue('PDF_BASE64')
+      saveAsBase64: jest.fn().mockResolvedValue('PDF_BASE64'),
+      save: jest.fn().mockResolvedValue(new Uint8Array([0x25, 0x50, 0x44, 0x46])) // mock PDF magic bytes
     })
   }
 }));

@@ -5,12 +5,12 @@
  */
 
 import React from 'react';
-import { View, Text, ScrollView, Pressable, Switch, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import {
   Moon,
   Sun,
-  Monitor,
   Info,
   Shield,
   Mail,
@@ -20,7 +20,7 @@ import {
 import { Colors } from '@design-system/tokens';
 import { Card } from '@components/Card';
 import { Divider } from '@components/Divider';
-import { useAppStore, type ThemeMode } from '@store/useAppStore';
+import { useAppStore } from '@store/useAppStore';
 import { useTheme } from '@hooks/useTheme';
 import { APP_CONFIG } from '@constants/config';
 
@@ -38,7 +38,7 @@ function SettingsRow({
   onPress?: () => void;
   rightElement?: React.ReactNode;
 }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <Pressable
@@ -48,7 +48,10 @@ function SettingsRow({
       accessibilityRole={onPress ? 'button' : 'text'}
       accessibilityLabel={label}
     >
-      <View className="w-[36px] h-[36px] rounded-md bg-primary-muted dark:bg-border-dark items-center justify-center mr-1.5">
+      <View
+        className="w-[36px] h-[36px] rounded-md bg-primary-muted dark:bg-surface-dark items-center justify-center mr-1.5"
+        style={{ backgroundColor: isDark ? Colors.surfaceRaisedDark : Colors.primaryMuted }}
+      >
         {icon}
       </View>
       <View className="flex-1">
@@ -70,38 +73,50 @@ function SettingsRow({
   );
 }
 
-/** Theme selector */
+/** Theme selector — Light / Dark toggle only */
 function ThemeSelector() {
   const themeMode = useAppStore((s) => s.themeMode);
   const setThemeMode = useAppStore((s) => s.setThemeMode);
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
 
-  const themes: { mode: ThemeMode; icon: typeof Sun; label: string }[] = [
+  const themes: { mode: 'light' | 'dark'; icon: any; label: string }[] = [
     { mode: 'light', icon: Sun, label: 'Light' },
     { mode: 'dark', icon: Moon, label: 'Dark' },
-    { mode: 'system', icon: Monitor, label: 'System' },
   ];
 
   return (
-    <View className="flex-row mx-2 bg-border-subtle dark:bg-border-dark rounded-md p-0.5">
+    <View
+      className="mx-2 flex-row gap-0.5 rounded-md p-0.5"
+      style={{ backgroundColor: isDark ? Colors.borderDark : Colors.border }}
+    >
       {themes.map(({ mode, icon: Icon, label }) => {
         const isActive = themeMode === mode;
         return (
           <Pressable
             key={mode}
-            className={`flex-1 flex-row items-center justify-center py-1 rounded-sm ${isActive ? 'bg-surface dark:bg-surface-dark' : ''}`}
+            className={`flex-1 flex-row items-center justify-center py-1.5 rounded-sm`}
+            style={{
+              backgroundColor: isActive
+                ? isDark ? Colors.surfaceRaisedDark : Colors.surface
+                : 'transparent',
+              elevation: isActive ? 1 : 0,
+            }}
             onPress={() => setThemeMode(mode)}
             accessibilityRole="radio"
             accessibilityState={{ checked: isActive }}
             accessibilityLabel={`${label} theme`}
-            style={isActive ? { elevation: 1 } : undefined}
           >
             <Icon
-              size={16}
+              size={14}
               color={isActive ? Colors.primary : colors.textSecondary}
             />
             <Text
-              className={`text-sm ml-0.5 ${isActive ? 'font-semibold text-primary' : 'text-text-secondary dark:text-text-secondary-dark'}`}
+              style={{
+                fontSize: 12,
+                marginLeft: 4,
+                fontWeight: isActive ? '600' : '400',
+                color: isActive ? Colors.primary : colors.textSecondary,
+              }}
             >
               {label}
             </Text>
@@ -114,6 +129,7 @@ function ThemeSelector() {
 
 export default function SettingsScreen() {
   const { colors } = useTheme();
+  const router = useRouter();
 
   return (
     <SafeAreaView
@@ -151,7 +167,7 @@ export default function SettingsScreen() {
             label="Premium"
             value="Manage your subscription"
             onPress={() => {
-              // Navigate to premium tab
+              router.push('/(tabs)/premium');
             }}
           />
           <SettingsRow

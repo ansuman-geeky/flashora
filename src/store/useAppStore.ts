@@ -7,7 +7,7 @@
 
 import { create } from 'zustand';
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = 'light' | 'dark';
 
 export interface AppState {
   /** Current theme preference */
@@ -34,7 +34,7 @@ export interface AppState {
  * For now, state resets on app restart (acceptable for scaffold).
  */
 export const useAppStore = create<AppState>((set) => ({
-  themeMode: 'system',
+  themeMode: 'light',
   hasOnboarded: false,
   toolActionsSinceLastAd: 0,
   lastAppOpenAdTime: 0,

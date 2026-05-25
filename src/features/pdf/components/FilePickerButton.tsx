@@ -17,7 +17,7 @@ interface FilePickerButtonProps {
 }
 
 export function FilePickerButton({ label, description, onPress, disabled }: FilePickerButtonProps) {
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
 
   return (
     <Card
@@ -26,7 +26,10 @@ export function FilePickerButton({ label, description, onPress, disabled }: File
       className="items-center py-4 mx-2 border-dashed"
       accessibilityLabel={label}
     >
-      <View className="w-[56px] h-[56px] rounded-full bg-primary-muted dark:bg-border-dark items-center justify-center mb-1.5">
+      <View
+        className="w-[56px] h-[56px] rounded-full items-center justify-center mb-1.5"
+        style={{ backgroundColor: isDark ? Colors.surfaceRaisedDark : Colors.primaryMuted }}
+      >
         <Upload size={24} color={Colors.primary} />
       </View>
       <Text className="text-base font-semibold text-text-primary dark:text-text-primary-dark">

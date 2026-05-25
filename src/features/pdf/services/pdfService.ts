@@ -40,13 +40,28 @@ export async function pickPdfFiles(multiple: boolean = false): Promise<FileInfo[
       return null;
     }
 
-    return result.assets.map((asset) => ({
+    const files = result.assets.map((asset) => ({
       uri: asset.uri,
       name: asset.name,
       size: asset.size ?? 0,
       mimeType: asset.mimeType ?? 'application/pdf',
     }));
+
+    // Early validation of picked file formats
+    for (const file of files) {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      const isPdf = ext === 'pdf' || file.mimeType === 'application/pdf' || file.mimeType === 'application/octet-stream';
+      if (!isPdf) {
+        throw createToolError(
+          'UNSUPPORTED_FORMAT',
+          'Only PDF files are supported. Please select a valid PDF file.'
+        );
+      }
+    }
+
+    return files;
   } catch (error) {
+    if (isToolError(error)) throw error;
     recordError(error, 'pdfService.pickPdfFiles');
     throw createToolError('PROCESSING_FAILED', 'Failed to open file picker', error);
   }
@@ -80,13 +95,28 @@ export async function pickImageFiles(): Promise<FileInfo[] | null> {
       return null;
     }
 
-    return result.assets.map((asset) => ({
+    const files = result.assets.map((asset) => ({
       uri: asset.uri,
       name: asset.name,
       size: asset.size ?? 0,
       mimeType: asset.mimeType ?? 'image/jpeg',
     }));
+
+    // Early validation of picked file formats
+    for (const file of files) {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      const isImage = ['jpg', 'jpeg', 'png', 'webp'].includes(ext ?? '') || file.mimeType.startsWith('image/') || file.mimeType === 'application/octet-stream';
+      if (!isImage) {
+        throw createToolError(
+          'UNSUPPORTED_FORMAT',
+          'Only image files (JPG, PNG, WebP) are supported. Please select valid images.'
+        );
+      }
+    }
+
+    return files;
   } catch (error) {
+    if (isToolError(error)) throw error;
     recordError(error, 'pdfService.pickImageFiles');
     throw createToolError('PROCESSING_FAILED', 'Failed to open file picker', error);
   }

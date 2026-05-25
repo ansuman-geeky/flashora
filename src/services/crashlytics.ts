@@ -5,11 +5,10 @@
  * should be reported through this service.
  */
 
+import crashlytics from '@react-native-firebase/crashlytics';
+
 /**
  * Record a non-fatal error to Crashlytics.
- *
- * Implementation will be wired to @react-native-firebase/crashlytics in Step 13.
- * For now, logs to console in development.
  */
 export function recordError(error: unknown, context?: string): void {
   let errorObj: Error;
@@ -17,7 +16,6 @@ export function recordError(error: unknown, context?: string): void {
   if (error instanceof Error) {
     errorObj = error;
   } else if (typeof error === 'object' && error !== null) {
-    // Handle plain objects with message property (common in JS/Native errors)
     const msg = (error as any).message || JSON.stringify(error);
     errorObj = new Error(msg);
   } else {
@@ -27,7 +25,17 @@ export function recordError(error: unknown, context?: string): void {
   if (__DEV__) {
     console.error(`[Crashlytics] ${context ?? 'Unknown context'}:`, errorObj);
   }
-  // Firebase Crashlytics will be wired here in Step 13
+  
+  try {
+    if (context) {
+      void crashlytics().setAttribute('context', context);
+    }
+    void crashlytics().recordError(errorObj);
+  } catch (err) {
+    if (__DEV__) {
+      console.warn('[Crashlytics] Failed to record error to Firebase:', err);
+    }
+  }
 }
 
 /**
@@ -37,7 +45,13 @@ export function setCustomKey(key: string, value: string | number | boolean): voi
   if (__DEV__) {
     console.log(`[Crashlytics] Set key: ${key} = ${String(value)}`);
   }
-  // Firebase Crashlytics will be wired here in Step 13
+  try {
+    void crashlytics().setAttribute(key, String(value));
+  } catch (err) {
+    if (__DEV__) {
+      console.warn('[Crashlytics] Failed to set attribute:', err);
+    }
+  }
 }
 
 /**
@@ -47,7 +61,13 @@ export function setUserId(userId: string): void {
   if (__DEV__) {
     console.log(`[Crashlytics] Set userId: ${userId}`);
   }
-  // Firebase Crashlytics will be wired here in Step 13
+  try {
+    void crashlytics().setUserId(userId);
+  } catch (err) {
+    if (__DEV__) {
+      console.warn('[Crashlytics] Failed to set user ID:', err);
+    }
+  }
 }
 
 /**
@@ -57,5 +77,11 @@ export function log(message: string): void {
   if (__DEV__) {
     console.log(`[Crashlytics] ${message}`);
   }
-  // Firebase Crashlytics will be wired here in Step 13
+  try {
+    void crashlytics().log(message);
+  } catch (err) {
+    if (__DEV__) {
+      console.warn('[Crashlytics] Failed to log breadcrumb message:', err);
+    }
+  }
 }

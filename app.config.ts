@@ -37,7 +37,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         'android.permission.INTERNET',
         'android.permission.ACCESS_NETWORK_STATE',
       ],
-      // googleServicesFile: hasGoogleServices ? './google-services.json' : process.env.GOOGLE_SERVICES_JSON,
+      googleServicesFile: hasGoogleServices ? './google-services.json' : (process.env.GOOGLE_SERVICES_JSON || './google-services.json'),
     },
     web: {
       bundler: 'metro',
@@ -77,18 +77,16 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           iCloudContainerEnvironment: 'Production',
         },
       ],
-      /*
       [
-        '@react-native-firebase/app',
+        '@react-native-firebase/app/app.plugin.js',
       ],
       [
-        '@react-native-firebase/crashlytics',
+        '@react-native-firebase/crashlytics/app.plugin.js',
       ],
-      */
       [
         'react-native-google-mobile-ads',
         {
-          androidAppId: process.env.ADMOB_ANDROID_APP_ID || 'ca-app-pub-3940256099942544~3347511713',
+          androidAppId: process.env.ADMOB_ANDROID_APP_ID || 'ca-app-pub-2287719258467717~5886691039',
           iosAppId: process.env.ADMOB_IOS_APP_ID || 'ca-app-pub-3940256099942544~1458002511',
         },
       ],

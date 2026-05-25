@@ -40,7 +40,13 @@ const ERROR_MESSAGES: Record<ToolErrorCode, { title: string; description: string
     title: 'Processing Failed',
     description: 'Something went wrong while processing your file. Please try again.',
   },
+  PREMIUM_REQUIRED: {
+    title: 'Premium Required',
+    description: 'You have reached your daily limit of 5 free operations. Upgrade to Premium for unlimited access.',
+  },
 };
+
+import { useRouter } from 'expo-router';
 
 export interface ErrorDisplayProps {
   errorCode: ToolErrorCode;
@@ -54,6 +60,7 @@ export function ErrorDisplay({
   errorCode, onRetry, onDismiss, className = '', style,
 }: ErrorDisplayProps) {
   const errorInfo = ERROR_MESSAGES[errorCode];
+  const router = useRouter();
 
   return (
     <View
@@ -68,8 +75,17 @@ export function ErrorDisplay({
         {errorInfo.description}
       </Text>
       <View className="flex-row mt-2 gap-1.5">
-        {onRetry && (
-          <Button label="Try Again" variant="outline" size="sm" onPress={onRetry} />
+        {errorCode === 'PREMIUM_REQUIRED' ? (
+          <Button 
+            label="Go Premium" 
+            variant="primary" 
+            size="sm" 
+            onPress={() => router.push('/(tabs)/premium')} 
+          />
+        ) : (
+          onRetry && (
+            <Button label="Try Again" variant="outline" size="sm" onPress={onRetry} />
+          )
         )}
         {onDismiss && (
           <Button label="Dismiss" variant="ghost" size="sm" onPress={onDismiss} />

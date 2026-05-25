@@ -14,7 +14,13 @@ $pathsToDelete = @(
     "android/build",
     "node_modules/@react-native/gradle-plugin/settings-plugin/build",
     "node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build",
-    "node_modules/@react-native/gradle-plugin/build"
+    "node_modules/@react-native/gradle-plugin/build",
+    "node_modules/expo-constants/android/build",
+    "node_modules/expo/android/build",
+    "node_modules/react-native-vision-camera/android/build",
+    "node_modules/react-native-worklets-core/android/build",
+    "node_modules/react-native-reanimated/android/build",
+    "node_modules/@shopify/react-native-skia/android/build"
 )
 
 foreach ($path in $pathsToDelete) {

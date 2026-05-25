@@ -1,12 +1,14 @@
-import React, { useMemo, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useMemo, useCallback, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { ScannerColors, ScannerLayout } from '../constants';
+import { usePremiumStore } from '../../../store/usePremiumStore';
+import { logEvent } from '../../../services/analytics';
 
 interface PremiumUpgradeSheetProps {
   isVisible: boolean;
   onClose: () => void;
-  onUpgrade: () => void;
+  onUpgrade?: () => void;
   title?: string;
   description?: string;
 }
@@ -19,6 +21,40 @@ export function PremiumUpgradeSheet({
   description = 'Save time and edit your scans directly in Word with Flashora Premium.'
 }: PremiumUpgradeSheetProps) {
   const snapPoints = useMemo(() => ['45%'], []);
+  const activateSubscription = usePremiumStore((s) => s.activateSubscription);
+  const [loading, setLoading] = useState(false);
+
+  const handleUpgrade = async () => {
+    setLoading(true);
+    logEvent('premium_click', { plan: 'yearly' });
+    
+    try {
+      // Simulate App Store / Play Store API request
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+      
+      activateSubscription('yearly', expiryDate.toISOString());
+      logEvent('premium_upgrade', { 
+        plan: 'yearly', 
+        revenue_inr: 799 
+      });
+      
+      setLoading(false);
+      Alert.alert(
+        'Success!',
+        'Thank you for upgrading to Flashora Premium! You now have unlimited access to all tools.',
+        [{ text: 'Awesome', onPress: () => {
+          onClose();
+          if (onUpgrade) onUpgrade();
+        }}]
+      );
+    } catch (e) {
+      setLoading(false);
+      Alert.alert('Error', 'Simulated purchase failed.');
+    }
+  };
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -45,6 +81,13 @@ export function PremiumUpgradeSheet({
       handleIndicatorStyle={styles.indicator}
     >
       <BottomSheetView style={styles.content}>
+        {loading && (
+          <View style={styles.loaderOverlay}>
+            <ActivityIndicator size="large" color={ScannerColors.accent} />
+            <Text style={styles.loaderText}>Processing payment...</Text>
+          </View>
+        )}
+        
         <View style={styles.badgeContainer}>
           <View style={styles.proBadge}>
             <Text style={styles.proText}>PRO</Text>
@@ -57,7 +100,8 @@ export function PremiumUpgradeSheet({
         <TouchableOpacity 
           style={styles.upgradeButton} 
           activeOpacity={0.8}
-          onPress={onUpgrade}
+          onPress={handleUpgrade}
+          disabled={loading}
         >
           <Text style={styles.upgradeText}>upgrade to pro</Text>
         </TouchableOpacity>
@@ -65,6 +109,7 @@ export function PremiumUpgradeSheet({
         <TouchableOpacity 
           style={styles.dismissButton} 
           onPress={onClose}
+          disabled={loading}
         >
           <Text style={styles.dismissText}>maybe later</Text>
         </TouchableOpacity>
@@ -74,6 +119,21 @@ export function PremiumUpgradeSheet({
 }
 
 const styles = StyleSheet.create({
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  loaderText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 8,
+  },
   background: {
     backgroundColor: ScannerColors.bgCard,
     borderTopLeftRadius: 20,
