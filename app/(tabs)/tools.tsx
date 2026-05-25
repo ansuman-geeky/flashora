@@ -33,6 +33,7 @@ import { SectionHeader } from '@components/SectionHeader';
 import { ToolCard } from '@components/ToolCard';
 import { getToolsByCategory, CATEGORY_META } from '@constants/tools';
 import { useTheme } from '@hooks/useTheme';
+import { useAppStore } from '@store/useAppStore';
 import type { Tool } from '@app-types/tool';
 
 /** Map icon string names to Lucide components */
@@ -63,6 +64,8 @@ function getIconComponent(iconName: string): LucideIcon {
 export default function ToolsScreen() {
   const { colors } = useTheme();
   const router = useRouter();
+  const favorites = useAppStore((s) => s.favorites);
+  const toggleFavorite = useAppStore((s) => s.toggleFavorite);
 
   const handleToolPress = useCallback(
     (tool: Tool) => {
@@ -115,6 +118,8 @@ export default function ToolsScreen() {
                         isPremium={tool.isPremium}
                         onPress={() => handleToolPress(tool)}
                         layout="grid"
+                        isFavorite={favorites.includes(tool.id)}
+                        onToggleFavorite={() => toggleFavorite(tool.id)}
                       />
                     </View>
                   );

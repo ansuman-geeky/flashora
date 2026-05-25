@@ -3,27 +3,27 @@ import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Colors, Shadow } from '@design-system/tokens';
 import { useTheme } from '@hooks/useTheme';
-import { Clock, Grid, Star, Settings, Activity, LucideIcon } from 'lucide-react-native';
+import { Home, Grid, ScanLine, Settings, LucideIcon } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
 
 const ICON_MAP: Record<string, LucideIcon> = {
-  index: Clock,
+  index: Home,
   tools: Grid,
-  activity: Activity,
-  premium: Star,
+  scanner: ScanLine,
   settings: Settings,
 };
 
 const LABEL_MAP: Record<string, string> = {
-  index: 'Recent',
+  index: 'Home',
   tools: 'Tools',
-  activity: 'Activity',
-  premium: 'Premium',
+  scanner: 'Scanner',
   settings: 'Settings',
 };
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { isDark, colors } = useTheme();
+  const router = useRouter();
 
   const handleTabPress = useCallback((routeName: string, routeKey: string, isFocused: boolean) => {
     if (Platform.OS !== 'web') {
@@ -36,10 +36,14 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
       canPreventDefault: true,
     });
 
-    if (!isFocused && !event.defaultPrevented) {
-      navigation.navigate(routeName);
+    if (!event.defaultPrevented) {
+      if (routeName === 'scanner') {
+        router.push('/scanner/camera');
+      } else if (!isFocused) {
+        navigation.navigate(routeName);
+      }
     }
-  }, [navigation]);
+  }, [navigation, router]);
 
   return (
     <View 
@@ -54,7 +58,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]!;
         const isFocused = state.index === index;
-        const Icon = ICON_MAP[route.name] || Clock;
+        const Icon = ICON_MAP[route.name] || Home;
         const label = LABEL_MAP[route.name] || route.name;
 
         return (

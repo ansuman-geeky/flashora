@@ -18,6 +18,8 @@ export interface AppState {
   toolActionsSinceLastAd: number;
   /** Last app open ad timestamp (ms) */
   lastAppOpenAdTime: number;
+  /** Favorited tool IDs */
+  favorites: string[];
 
   // Actions
   setThemeMode: (mode: ThemeMode) => void;
@@ -25,6 +27,7 @@ export interface AppState {
   incrementToolActions: () => void;
   resetToolActions: () => void;
   setLastAppOpenAdTime: (time: number) => void;
+  toggleFavorite: (toolId: string) => void;
 }
 
 /**
@@ -38,6 +41,7 @@ export const useAppStore = create<AppState>((set) => ({
   hasOnboarded: false,
   toolActionsSinceLastAd: 0,
   lastAppOpenAdTime: 0,
+  favorites: [],
 
   setThemeMode: (mode) => set({ themeMode: mode }),
   setHasOnboarded: (value) => set({ hasOnboarded: value }),
@@ -47,4 +51,10 @@ export const useAppStore = create<AppState>((set) => ({
     })),
   resetToolActions: () => set({ toolActionsSinceLastAd: 0 }),
   setLastAppOpenAdTime: (time) => set({ lastAppOpenAdTime: time }),
+  toggleFavorite: (toolId) =>
+    set((state) => ({
+      favorites: state.favorites.includes(toolId)
+        ? state.favorites.filter((id) => id !== toolId)
+        : [...state.favorites, toolId],
+    })),
 }));

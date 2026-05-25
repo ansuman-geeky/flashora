@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, Platform, Share, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import {
@@ -16,6 +16,9 @@ import {
   Mail,
   Star,
   ChevronRight,
+  Clock,
+  Share2,
+  FileText,
 } from 'lucide-react-native';
 import { Colors } from '@design-system/tokens';
 import { Card } from '@components/Card';
@@ -167,22 +170,51 @@ export default function SettingsScreen() {
             label="Premium"
             value="Manage your subscription"
             onPress={() => {
-              router.push('/(tabs)/premium');
+              router.push('/premium' as never);
+            }}
+          />
+          <SettingsRow
+            icon={<Clock size={18} color={Colors.primary} />}
+            label="Recent Activity"
+            value="View your tool usage history"
+            onPress={() => {
+              router.push('/activity' as never);
             }}
           />
           <SettingsRow
             icon={<Shield size={18} color={Colors.primary} />}
             label="Privacy Policy"
             onPress={() => {
-              // Open privacy policy URL
+              router.push('/privacy' as never);
+            }}
+          />
+          <SettingsRow
+            icon={<FileText size={18} color={Colors.primary} />}
+            label="Terms & Conditions"
+            onPress={() => {
+              router.push('/terms' as never);
+            }}
+          />
+          <SettingsRow
+            icon={<Share2 size={18} color={Colors.primary} />}
+            label="Share App"
+            value="Share Flashora with friends"
+            onPress={async () => {
+              try {
+                await Share.share({
+                  message: `Download Flashora - Fast, Smart, and Offline-first Utility Hub for Android: https://play.google.com/store/apps/details?id=${APP_CONFIG.packageName}`,
+                });
+              } catch (error) {
+                console.warn('Sharing failed:', error);
+              }
             }}
           />
           <SettingsRow
             icon={<Mail size={18} color={Colors.primary} />}
             label="Contact Support"
-            value="flashora@support.com"
+            value="support@flashsuite.pro"
             onPress={() => {
-              // Open email client
+              void Linking.openURL('mailto:support@flashsuite.pro?subject=Flashora Support Request');
             }}
           />
         </View>
@@ -198,6 +230,9 @@ export default function SettingsScreen() {
             icon={<Info size={18} color={Colors.primary} />}
             label={APP_CONFIG.name}
             value={`Version ${APP_CONFIG.version}`}
+            onPress={() => {
+              router.push('/about' as never);
+            }}
           />
         </View>
       </ScrollView>

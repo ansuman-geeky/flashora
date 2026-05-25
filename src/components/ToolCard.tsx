@@ -6,7 +6,8 @@
  */
 
 import React from 'react';
-import { View, Text, type ViewStyle } from 'react-native';
+import { View, Text, Pressable, type ViewStyle } from 'react-native';
+import { Star } from 'lucide-react-native';
 import { Card } from './Card';
 import { Badge } from './Badge';
 
@@ -27,11 +28,15 @@ export interface ToolCardProps {
   layout?: 'grid' | 'list';
   className?: string;
   style?: ViewStyle;
+  /** Favorites management */
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 export function ToolCard({
   name, description, icon, color, isPremium = false,
   onPress, layout = 'grid', className = '', style,
+  isFavorite = false, onToggleFavorite,
 }: ToolCardProps) {
   if (layout === 'list') {
     return (
@@ -75,10 +80,28 @@ export function ToolCard({
     <Card
       variant="flat"
       onPress={onPress}
-      className={`items-center px-1 py-2 ${className}`}
+      className={`items-center px-1 py-2 relative ${className}`}
       style={style}
       accessibilityLabel={`${name}${isPremium ? ', premium' : ''}`}
     >
+      {onToggleFavorite && (
+        <Pressable
+          onPress={(e) => {
+            e.stopPropagation();
+            onToggleFavorite();
+          }}
+          style={{ position: 'absolute', top: 6, right: 6, padding: 4, zIndex: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        >
+          <Star
+            size={16}
+            color={isFavorite ? '#FFD60A' : '#94A3B8'}
+            fill={isFavorite ? '#FFD60A' : 'transparent'}
+          />
+        </Pressable>
+      )}
+
       {/* Icon */}
       <View
         className="w-[48px] h-[48px] rounded-lg items-center justify-center mb-1"

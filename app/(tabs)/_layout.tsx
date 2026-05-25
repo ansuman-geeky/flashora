@@ -34,17 +34,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="activity"
+        name="scanner"
         options={{
-          title: 'Activity',
-          tabBarAccessibilityLabel: 'Activity tab',
-        }}
-      />
-      <Tabs.Screen
-        name="premium"
-        options={{
-          title: 'Premium',
-          tabBarAccessibilityLabel: 'Premium tab',
+          title: 'Scanner',
+          tabBarAccessibilityLabel: 'Scanner tab',
         }}
       />
       <Tabs.Screen

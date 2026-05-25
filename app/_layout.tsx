@@ -114,6 +114,26 @@ export default function RootLayout() {
             name="url-shortener"
             options={{ headerShown: false, animation: 'slide_from_right' }}
           />
+          <Stack.Screen
+            name="premium"
+            options={{ headerShown: false, animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="activity"
+            options={{ headerShown: false, animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="privacy"
+            options={{ headerShown: false, animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="terms"
+            options={{ headerShown: false, animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="about"
+            options={{ headerShown: false, animation: 'slide_from_right' }}
+          />
         </Stack>
         <StatusBar style={isDark ? 'light' : 'dark'} />
       </SafeAreaProvider>
