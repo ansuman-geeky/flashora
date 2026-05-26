@@ -65,7 +65,7 @@ export default function PdfPasswordScreen() {
     );
   }
 
-  if (processor.status === 'processing') return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: '#F4F5F7' }}><ScreenHeader title="Password Lock" showBack={false} /><ProcessingView toolName="Password Lock" progress={processor.progress} /></SafeAreaView>);
+  if (processor.status === 'processing') return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: '#F4F5F7' }}><ScreenHeader title="Password Lock" showBack={true} /><ProcessingView toolName="Password Lock" progress={processor.progress} /></SafeAreaView>);
   if (processor.status === 'completed' && processor.result) return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}><ScreenHeader title="Password Lock" /><ResultView result={processor.result} onShare={(u) => { void shareFile(u); }} onDownload={(u, n) => { void saveToGeneralStorage(u, n); }} onBackToTools={() => router.replace('/(tabs)/tools')} onProcessAnother={handleReset} toolName="Password Lock" /></SafeAreaView>);
 
   return (

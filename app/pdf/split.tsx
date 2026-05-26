@@ -47,7 +47,7 @@ export default function PdfSplitScreen() {
         edges={['top']}
       style={{ flex: 1, backgroundColor: colors.bg }}
       >
-        <ScreenHeader title="Split PDF" showBack={false} />
+        <ScreenHeader title="Split PDF" showBack={true} />
         <ProcessingView toolName="Split PDF" progress={processor.progress} />
       </SafeAreaView>
     );

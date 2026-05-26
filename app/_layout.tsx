@@ -31,6 +31,7 @@ import { useTheme } from '@hooks/useTheme';
 import mobileAds from 'react-native-google-mobile-ads';
 import { initAds } from '@services/adService';
 import { initRemoteConfig } from '@services/remoteConfig';
+import { SnackbarProvider } from '../src/contexts/SnackbarContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -82,60 +83,62 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: 'fade',
-          }}
-        >
-          {/* Tab group — main app */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <SnackbarProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: 'fade',
+            }}
+          >
+            {/* Tab group — main app */}
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          {/* Tool category stacks — pushed on top of tabs */}
-          <Stack.Screen
-            name="pdf"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="qr"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="image"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
+            {/* Tool category stacks — pushed on top of tabs */}
+            <Stack.Screen
+              name="pdf"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="qr"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="image"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
 
-          <Stack.Screen
-            name="scanner"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
+            <Stack.Screen
+              name="scanner"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
 
-          <Stack.Screen
-            name="url-shortener"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="premium"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="activity"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="privacy"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="terms"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="about"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-        </Stack>
-        <StatusBar style={isDark ? 'light' : 'dark'} />
+            <Stack.Screen
+              name="url-shortener"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="premium"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="activity"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="privacy"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="terms"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="about"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+          </Stack>
+          <StatusBar style={isDark ? 'light' : 'dark'} />
+        </SnackbarProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

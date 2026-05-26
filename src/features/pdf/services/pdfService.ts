@@ -214,18 +214,32 @@ export async function splitPdf(file: FileInfo, pages: number[]): Promise<ToolRes
   }
 }
 
+import { PdfProcessorModule } from '../../../native/PdfProcessor';
+
 /**
- * Compress a PDF (Optimizes internal structure).
+ * Compress a PDF using Native Bridge (Optimizes internal structure).
  */
-export async function compressPdf(file: FileInfo, _quality: CompressionQuality): Promise<ToolResult> {
+export async function compressPdf(file: FileInfo, quality: CompressionQuality): Promise<ToolResult> {
   const startTime = Date.now();
   try {
-    const base64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
-    const pdfDoc = await PDFDocument.load(base64ToUint8Array(base64));
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available on this platform.');
+    }
 
-    // Simple compression: remove unused objects and re-save
-    const bytes = await pdfDoc.save({ useObjectStreams: true });
-    return await savePdfResult(bytes, 'compressed', startTime);
+    const outputPath = await PdfProcessorModule.compressPdf(file.uri, quality);
+    const outputUri = `file://${outputPath}`;
+    const fileInfo = await FileSystem.getInfoAsync(outputUri);
+
+    const outputName = generateOutputFilename('doc', 'compressed', 'pdf');
+    const finalUri = `${FileSystem.cacheDirectory}${outputName}`;
+    await FileSystem.moveAsync({ from: outputUri, to: finalUri });
+
+    return {
+      outputUris: [finalUri],
+      outputNames: [outputName],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: fileInfo.exists ? fileInfo.size : 0,
+    };
   } catch (error) {
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.compressPdf');
@@ -299,18 +313,29 @@ export async function reorderPdf(file: FileInfo, pageOrder: number[]): Promise<T
 }
 
 /**
- * Add password protection to a PDF.
+ * Add password protection to a PDF using Native Bridge.
  */
 export async function passwordProtectPdf(file: FileInfo, password: string): Promise<ToolResult> {
   const startTime = Date.now();
   try {
-    const base64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
-    const pdfDoc = await PDFDocument.load(base64ToUint8Array(base64));
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available on this platform.');
+    }
 
-    // Note: pdf-lib encryption requires a specific build or version.
-    // If not supported, we'll return the original with a "Protected" name.
-    const bytes = await pdfDoc.save();
-    return await savePdfResult(bytes, 'protected', startTime);
+    const outputPath = await PdfProcessorModule.encryptPdf(file.uri, password, password);
+    const outputUri = `file://${outputPath}`;
+    const fileInfo = await FileSystem.getInfoAsync(outputUri);
+
+    const outputName = generateOutputFilename('doc', 'protected', 'pdf');
+    const finalUri = `${FileSystem.cacheDirectory}${outputName}`;
+    await FileSystem.moveAsync({ from: outputUri, to: finalUri });
+
+    return {
+      outputUris: [finalUri],
+      outputNames: [outputName],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: fileInfo.exists ? fileInfo.size : 0,
+    };
   } catch (error) {
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.passwordProtectPdf');

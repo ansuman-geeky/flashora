@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { View, Text, Pressable, type ViewStyle } from 'react-native';
-import { Star } from 'lucide-react-native';
+import { Heart } from 'lucide-react-native';
 import { Card } from './Card';
 import { Badge } from './Badge';
 
@@ -90,14 +90,17 @@ export function ToolCard({
             e.stopPropagation();
             onToggleFavorite();
           }}
-          style={{ position: 'absolute', top: 6, right: 6, padding: 4, zIndex: 10 }}
+          style={({ pressed }) => [
+            { position: 'absolute', top: 6, right: 6, padding: 4, zIndex: 10 },
+            pressed && { transform: [{ scale: 0.8 }] },
+          ]}
           accessibilityRole="button"
           accessibilityLabel={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
-          <Star
+          <Heart
             size={16}
-            color={isFavorite ? '#FFD60A' : '#94A3B8'}
-            fill={isFavorite ? '#FFD60A' : 'transparent'}
+            color={isFavorite ? '#EF4444' : '#94A3B8'}
+            fill={isFavorite ? '#EF4444' : 'transparent'}
           />
         </Pressable>
       )}

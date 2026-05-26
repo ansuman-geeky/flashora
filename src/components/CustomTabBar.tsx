@@ -37,9 +37,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     });
 
     if (!event.defaultPrevented) {
-      if (routeName === 'scanner') {
-        router.push('/scanner/camera');
-      } else if (!isFocused) {
+      if (!isFocused) {
         navigation.navigate(routeName);
       }
     }

@@ -43,7 +43,7 @@ export default function ImageToPdfScreen() {
         edges={['top']}
       style={{ flex: 1, backgroundColor: colors.bg }}
       >
-        <ScreenHeader title="Image to PDF" showBack={false} />
+        <ScreenHeader title="Image to PDF" showBack={true} />
         <ProcessingView toolName="Image to PDF" progress={processor.progress} />
       </SafeAreaView>
     );

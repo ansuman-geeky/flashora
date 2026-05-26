@@ -49,7 +49,7 @@ export default function PdfMergeScreen() {
         edges={['top']}
         style={{ flex: 1, backgroundColor: colors.bg }}
       >
-        <ScreenHeader title="Merge PDF" showBack={false} />
+        <ScreenHeader title="Merge PDF" showBack={true} />
         <ProcessingView toolName="Merge PDF" progress={processor.progress} />
       </SafeAreaView>
     );

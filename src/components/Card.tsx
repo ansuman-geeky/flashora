@@ -38,6 +38,10 @@ export interface CardProps {
   style?: ViewStyle;
   /** Accessibility label for pressable cards */
   accessibilityLabel?: string;
+  /** Long press handler */
+  onLongPress?: PressableProps['onLongPress'];
+  /** Disable press interactions */
+  disabled?: boolean;
 }
 
 /** Background classes by variant */
@@ -61,6 +65,8 @@ export function Card({
   className = '',
   style,
   accessibilityLabel,
+  onLongPress,
+  disabled,
 }: CardProps) {
   const scale = useSharedValue(1);
 
@@ -69,13 +75,13 @@ export function Card({
   }));
 
   const handlePressIn = useCallback(() => {
-    if (onPress) {
+    if (onPress || onLongPress) {
       scale.value = withTiming(0.98, {
         duration: 120,
         easing: Easing.out(Easing.quad),
       });
     }
-  }, [onPress, scale]);
+  }, [onPress, onLongPress, scale]);
 
   const handlePressOut = useCallback(() => {
     scale.value = withTiming(1, {
@@ -92,14 +98,16 @@ export function Card({
 
   const shadowStyle = VARIANT_SHADOW_STYLES[variant];
 
-  if (onPress) {
+  if (onPress || onLongPress) {
     return (
       <AnimatedPressable
         style={[animatedStyle, shadowStyle, style]}
         className={baseClasses}
         onPress={onPress}
+        onLongPress={onLongPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        disabled={disabled}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
       >

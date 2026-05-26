@@ -66,7 +66,7 @@ export default function TxtToPdfScreen() {
   if (processor.status === 'processing') {
     return (
       <SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}>
-        <ScreenHeader title="TXT to PDF" showBack={false} />
+        <ScreenHeader title="TXT to PDF" showBack={true} />
         <ProcessingView toolName="Converting Text..." progress={processor.progress} />
       </SafeAreaView>
     );

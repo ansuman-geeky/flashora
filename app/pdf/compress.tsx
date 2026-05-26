@@ -44,7 +44,7 @@ export default function PdfCompressScreen() {
         edges={['top']}
       style={{ flex: 1, backgroundColor: colors.bg }}
       >
-        <ScreenHeader title="Compress PDF" showBack={false} />
+        <ScreenHeader title="Compress PDF" showBack={true} />
         <ProcessingView toolName="Compress PDF" progress={processor.progress} />
       </SafeAreaView>
     );
@@ -53,9 +53,9 @@ export default function PdfCompressScreen() {
   if (processor.status === 'completed' && processor.result) {
     return (
       <SafeAreaView
-        className="flex-1 bg-bg dark:bg-bg-dark"
+        className="flex-1"
         edges={['top']}
-      style={{ flex: 1, backgroundColor: colors.bg }}
+        style={{ flex: 1, backgroundColor: colors.bg }}
       >
         <ScreenHeader title="Compress PDF" />
         <ResultView
@@ -65,6 +65,11 @@ export default function PdfCompressScreen() {
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Compress PDF"
+          successMessage={
+            file && processor.result
+              ? `Before: ${(file.size / 1024 / 1024).toFixed(2)} MB\nAfter: ${(processor.result.fileSizeBytes / 1024 / 1024).toFixed(2)} MB\nSaved: ${Math.max(0, Math.round((1 - processor.result.fileSizeBytes / file.size) * 100))}%`
+              : undefined
+          }
         />
       </SafeAreaView>
     );
