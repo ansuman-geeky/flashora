@@ -13,10 +13,12 @@ import { Colors } from '@design-system/tokens';
 import { formatFileSize, formatDuration } from '@utils/formatters';
 import type { ToolResult } from '@app-types/tool';
 
+import { useSnackbar } from '../../../contexts/SnackbarContext';
+
 interface ResultViewProps {
   result: ToolResult;
-  onShare: (uri: string) => void;
-  onDownload?: (uri: string, filename: string) => void;
+  onShare: (uri: string) => void | Promise<void>;
+  onDownload?: (uri: string, filename: string) => void | Promise<void>;
   onBackToTools: () => void;
   onProcessAnother: () => void;
   toolName: string;
@@ -24,6 +26,8 @@ interface ResultViewProps {
 }
 
 export function ResultView({ result, onShare, onDownload, onBackToTools, onProcessAnother, toolName, successMessage }: ResultViewProps) {
+  const { showSnackbar } = useSnackbar();
+
   return (
     <View className="flex-1 px-2 pt-3">
       {/* Success indicator */}
@@ -75,7 +79,16 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
             variant="primary"
             className="flex-1"
             leftIcon={<Share2 size={20} color="#FFFFFF" />}
-            onPress={() => result.outputUris[0] && onShare(result.outputUris[0])}
+            onPress={async () => {
+              if (result.outputUris[0]) {
+                try {
+                  await onShare(result.outputUris[0]);
+                  showSnackbar('Saved successfully', 'success');
+                } catch (e) {
+                  // error handled by service
+                }
+              }
+            }}
           />
           {onDownload && (
             <Button
@@ -84,7 +97,16 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
               className="flex-1"
               style={{ backgroundColor: `${Colors.primary}25` }}
               leftIcon={<CheckCircle size={20} color={Colors.primary} />}
-              onPress={() => result.outputUris[0] && onDownload(result.outputUris[0], result.outputNames[0] || 'file.pdf')}
+              onPress={async () => {
+                if (result.outputUris[0]) {
+                  try {
+                    await onDownload(result.outputUris[0], result.outputNames[0] || 'file.pdf');
+                    showSnackbar('Saved successfully', 'success');
+                  } catch (e) {
+                    // error handled by service
+                  }
+                }
+              }}
             />
           )}
         </View>

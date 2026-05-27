@@ -66,12 +66,17 @@ export default function ToolsScreen() {
   const router = useRouter();
   const favorites = useAppStore((s) => s.favorites);
   const toggleFavorite = useAppStore((s) => s.toggleFavorite);
+  const isPremiumUser = useAppStore((s) => s.isPremiumUser);
 
   const handleToolPress = useCallback(
     (tool: Tool) => {
+      if (tool.isPremium && !isPremiumUser) {
+        router.push('/premium' as never);
+        return;
+      }
       router.push(tool.route as never);
     },
-    [router]
+    [router, isPremiumUser]
   );
 
   const categories = Object.keys(CATEGORY_META);

@@ -63,8 +63,8 @@ export default function RemoveMetadataScreen() {
         <ScreenHeader title="Remove Metadata" />
         <ResultView
           result={processor.result}
-          onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
+          onShare={(uri) => shareFile(uri)}
+          onDownload={(uri, name) => saveToGeneralStorage(uri, name, name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg')}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Remove Metadata"

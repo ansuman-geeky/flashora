@@ -202,7 +202,7 @@ export default function SettingsScreen() {
             onPress={async () => {
               try {
                 await Share.share({
-                  message: `Download Flashora - Fast, Smart, and Offline-first Utility Hub for Android: https://play.google.com/store/apps/details?id=${APP_CONFIG.packageName}`,
+                  message: `Try Flashora – powerful PDF & Image tools app:\nhttps://play.google.com/store/apps/details?id=${APP_CONFIG.packageName}`,
                 });
               } catch (error) {
                 console.warn('Sharing failed:', error);

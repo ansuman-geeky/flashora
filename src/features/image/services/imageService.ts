@@ -71,7 +71,7 @@ export async function compressImage(
   
   const result = await ImageManipulator.manipulateAsync(
     uri,
-    [],
+    [{ rotate: 360 }], // Hack to force image processing on Android/iOS when no other actions are present
     { 
       compress: options.quality, 
       format: formatStr

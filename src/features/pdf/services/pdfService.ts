@@ -362,17 +362,20 @@ export async function shareFile(uri: string): Promise<void> {
 /**
  * Save a file to general storage (Downloads/Documents).
  */
-export async function saveToGeneralStorage(uri: string, filename: string): Promise<void> {
+export async function saveToGeneralStorage(uri: string, filename: string, mimeType: string = 'application/pdf'): Promise<void> {
   try {
     const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
     if (permissions.granted) {
       const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename, 'application/pdf')
+      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename, mimeType)
         .then(async (safUri) => {
           await FileSystem.writeAsStringAsync(safUri, base64, { encoding: FileSystem.EncodingType.Base64 });
         });
+    } else {
+      throw createToolError('PERMISSION_DENIED', 'Storage permission denied');
     }
   } catch (error) {
+    if (isToolError(error)) throw error;
     recordError(error, 'pdfService.saveToGeneralStorage');
     throw createToolError('PROCESSING_FAILED', 'Failed to save file', error);
   }
