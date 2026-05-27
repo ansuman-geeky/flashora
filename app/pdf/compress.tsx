@@ -14,6 +14,7 @@ import { pickPdfFiles, compressPdf, shareFile, saveToGeneralStorage } from '@fea
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@hooks/useTheme';
+import { useSnackbar } from '../../src/contexts/SnackbarContext';
 import { COMPRESSION_PRESETS, type CompressionQuality } from '@features/pdf/types';
 import { Colors } from '@design-system/tokens';
 import type { FileInfo } from '@utils/fileUtils';
@@ -21,6 +22,7 @@ import type { FileInfo } from '@utils/fileUtils';
 export default function PdfCompressScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const { showSnackbar } = useSnackbar();
   const [file, setFile] = useState<FileInfo | null>(null);
   const [quality, setQuality] = useState<CompressionQuality>('medium');
   const processor = useToolProcessor({ toolId: 'pdf_compress', toolName: 'Compress PDF', category: 'pdf' });
@@ -61,7 +63,14 @@ export default function PdfCompressScreen() {
         <ResultView
           result={processor.result}
           onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
+          onDownload={async (uri, name) => { 
+            try {
+              await saveToGeneralStorage(uri, name);
+              showSnackbar('Saved to device successfully', 'success');
+            } catch (err) {
+              showSnackbar('Failed to save file', 'error');
+            }
+          }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Compress PDF"
