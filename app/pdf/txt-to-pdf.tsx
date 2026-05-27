@@ -106,9 +106,9 @@ export default function TxtToPdfScreen() {
 
         {file && (
           <View className="px-2 mt-4">
-            <Card variant="flat" className="p-3 mb-6 bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
-              <Text className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-1">Selected File</Text>
-              <Text className="text-xs text-text-secondary dark:text-text-secondary-dark">{file.name}</Text>
+            <Card variant="flat" className="p-3 mb-6 bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark">
+              <Text className="text-sm font-semibold text-onSurface dark:text-onSurface-dark mb-1">Selected File</Text>
+              <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">{file.name}</Text>
             </Card>
 
             <Button label="Convert to PDF" variant="primary" size="lg" fullWidth onPress={handleConvert} />

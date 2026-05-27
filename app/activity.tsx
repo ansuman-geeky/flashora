@@ -25,10 +25,10 @@ export default function ActivityScreen() {
       style={{ flex: 1, backgroundColor: colors.bg }}
     >
       <View className="px-2 pt-2 pb-1.5" style={{ flex: 0 }}>
-        <Text className="text-xl font-bold text-text-primary dark:text-text-primary-dark">
+        <Text className="text-xl font-bold text-onSurface dark:text-onSurface-dark">
           Activity
         </Text>
-        <Text className="text-xs text-text-secondary dark:text-text-secondary-dark mt-0.5">
+        <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5">
           Your recent tool usage
         </Text>
       </View>
@@ -46,12 +46,12 @@ export default function ActivityScreen() {
           contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16 }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <View className="flex-row items-center bg-surface dark:bg-surface-dark border border-border dark:border-border-dark rounded-md p-2 mb-1">
+            <View className="flex-row items-center bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark rounded-md p-2 mb-1">
               <View className="flex-1">
-                <Text className="text-base font-medium text-text-primary dark:text-text-primary-dark">
+                <Text className="text-base font-medium text-onSurface dark:text-onSurface-dark">
                   {item.toolName}
                 </Text>
-                <Text className="text-xs text-text-tertiary dark:text-text-secondary-dark mt-0.5">
+                <Text className="text-xs text-outline dark:text-onSurfaceVariant-dark mt-0.5">
                   {new Date(item.timestamp).toLocaleString()}
                 </Text>
               </View>

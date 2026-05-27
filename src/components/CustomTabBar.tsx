@@ -72,18 +72,18 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
             <View style={styles.iconContainer}>
               <Icon 
                 size={24} 
-                color={isFocused ? Colors.primary : (isDark ? colors.textSecondary : colors.textTertiary)} 
+                color={isFocused ? colors.onSecondaryContainer : (isDark ? colors.onSurfaceVariantDark : colors.onSurfaceVariant)} 
                 strokeWidth={isFocused ? 2.5 : 2}
               />
               {isFocused && (
-                <View style={[styles.activeDot, { backgroundColor: Colors.primary }]} />
+                <View style={[styles.activeDot, { backgroundColor: colors.secondaryContainer, zIndex: -1, width: 64, height: 32, borderRadius: 16, bottom: 0 }]} />
               )}
             </View>
             <Text 
               style={[
                 styles.label, 
                 { 
-                  color: isFocused ? Colors.primary : (isDark ? colors.textSecondary : colors.textTertiary),
+                  color: isFocused ? colors.onSurface : (isDark ? colors.onSurfaceVariantDark : colors.onSurfaceVariant),
                   fontWeight: isFocused ? '600' : '500',
                 }
               ]}

@@ -20,10 +20,10 @@ export function ProcessingView({ toolName, progress, message }: ProcessingViewPr
       <View className="w-[64px] h-[64px] rounded-full bg-primary-muted items-center justify-center mb-3">
         <Loader size={28} color={Colors.primary} />
       </View>
-      <Text className="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-0.5">
+      <Text className="text-lg font-semibold text-onSurface dark:text-onSurface-dark mb-0.5">
         Processing...
       </Text>
-      <Text className="text-sm text-text-secondary dark:text-text-secondary-dark text-center mb-3">
+      <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark text-center mb-3">
         {message ?? `${toolName} in progress. Please wait.`}
       </Text>
       <View className="w-full max-w-[280px]">

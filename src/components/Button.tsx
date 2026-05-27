@@ -51,71 +51,71 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
 
 /** Container classes by variant */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'bg-primary',
-  secondary: 'bg-primary-muted',
-  outline: 'bg-transparent border border-border',
+  primary: 'bg-primary dark:bg-primary-dark',
+  secondary: 'bg-secondaryContainer dark:bg-secondaryContainer-dark',
+  outline: 'bg-transparent border border-outline dark:border-outline-dark',
   ghost: 'bg-transparent',
 };
 
 /** Pressed container classes by variant */
 const VARIANT_PRESSED_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'bg-primary/90',
-  secondary: 'bg-primary-muted/80',
-  outline: 'bg-border-subtle',
-  ghost: 'bg-border-subtle',
+  primary: 'bg-primary/90 dark:bg-primary-dark/90',
+  secondary: 'bg-secondaryContainer/80 dark:bg-secondaryContainer-dark/80',
+  outline: 'bg-surfaceVariant/30 dark:bg-surfaceVariant-dark/30 border-outline dark:border-outline-dark',
+  ghost: 'bg-surfaceVariant/30 dark:bg-surfaceVariant-dark/30',
 };
 
 /** Disabled container classes by variant */
 const VARIANT_DISABLED_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'bg-primary/50',
-  secondary: 'bg-primary-muted/50',
-  outline: 'bg-transparent border border-border/50',
+  primary: 'bg-onSurface/12 dark:bg-onSurface-dark/12',
+  secondary: 'bg-onSurface/12 dark:bg-onSurface-dark/12',
+  outline: 'bg-transparent border border-onSurface/12 dark:border-onSurface-dark/12',
   ghost: 'bg-transparent',
 };
 
 /** Text classes by variant */
 const TEXT_VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'text-text-inverse',
-  secondary: 'text-primary',
-  outline: 'text-text-primary dark:text-text-primary-dark',
-  ghost: 'text-primary',
+  primary: 'text-onPrimary dark:text-onPrimary-dark',
+  secondary: 'text-onSecondaryContainer dark:text-onSecondaryContainer-dark',
+  outline: 'text-primary dark:text-primary-dark',
+  ghost: 'text-primary dark:text-primary-dark',
 };
 
 /** Disabled text classes by variant */
 const TEXT_DISABLED_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'text-text-inverse/70',
-  secondary: 'text-primary/50',
-  outline: 'text-text-tertiary',
-  ghost: 'text-primary/50',
+  primary: 'text-onSurface/38 dark:text-onSurface-dark/38',
+  secondary: 'text-onSurface/38 dark:text-onSurface-dark/38',
+  outline: 'text-onSurface/38 dark:text-onSurface-dark/38',
+  ghost: 'text-onSurface/38 dark:text-onSurface-dark/38',
 };
 
 /** Size classes for container */
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: 'h-[36px] px-3 rounded-sm',
-  md: 'h-[44px] px-4 rounded-md',
-  lg: 'h-[52px] px-5 rounded-lg',
+  sm: 'h-[36px] px-3 rounded-full',
+  md: 'h-[40px] px-6 rounded-full',
+  lg: 'h-[48px] px-8 rounded-full',
 };
 
 /** Text size classes */
 const TEXT_SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: 'text-sm',
-  md: 'text-base font-semibold',
-  lg: 'text-md font-semibold',
+  sm: 'text-sm font-medium',
+  md: 'text-sm font-medium',
+  lg: 'text-base font-medium',
 };
 
 /** Spinner size by button size */
 const SPINNER_SIZE: Record<ButtonSize, 'small' | 'large'> = {
   sm: 'small',
   md: 'small',
-  lg: 'large',
+  lg: 'small',
 };
 
 /** Spinner color by variant */
 const SPINNER_COLOR: Record<ButtonVariant, string> = {
   primary: '#FFFFFF',
-  secondary: '#5B5FEF',
-  outline: '#64748B',
-  ghost: '#5B5FEF',
+  secondary: '#101C2B',
+  outline: '#0061A4',
+  ghost: '#0061A4',
 };
 
 export function Button({
@@ -177,6 +177,7 @@ export function Button({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={isDisabled}
+      android_ripple={{ color: 'rgba(150, 150, 150, 0.2)', borderless: false }}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled: isDisabled, busy: loading }}

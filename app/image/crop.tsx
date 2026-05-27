@@ -81,7 +81,7 @@ export default function CropImageScreen() {
           description="Open your gallery to select and crop an image"
           onPress={handlePickAndCrop}
         />
-        <Text className="text-xs text-text-tertiary text-center mt-3 px-4">
+        <Text className="text-xs text-outline text-center mt-3 px-4">
           Crops are handled using your device's native editor for the best precision.
         </Text>
       </View>

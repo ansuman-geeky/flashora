@@ -60,16 +60,16 @@ export function QrResultCard({ data, onClose, onBackToTools }: QrResultCardProps
             {getIcon()}
           </View>
           <View className="flex-1">
-            <Text className="text-xs text-text-tertiary uppercase font-bold tracking-wider">
+            <Text className="text-xs text-outline uppercase font-bold tracking-wider">
               {data.type}
             </Text>
-            <Text className="text-base font-semibold text-text-primary dark:text-text-primary-dark" numberOfLines={1}>
+            <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark" numberOfLines={1}>
               {data.label}
             </Text>
           </View>
         </View>
 
-        <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mb-4 leading-5">
+        <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-4 leading-5">
           {data.value}
         </Text>
 

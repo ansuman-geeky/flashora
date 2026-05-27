@@ -33,10 +33,10 @@ export function HomeHeader({
             resizeMode="contain"
           />
           <View className="ml-3 justify-center">
-            <Text className="text-lg font-bold text-text-primary dark:text-text-primary-dark">
+            <Text className="text-lg font-bold text-onSurface dark:text-onSurface-dark">
               Flashora-Scanner & PDF Tools
             </Text>
-            <Text className="text-xs text-text-tertiary dark:text-text-secondary-dark">
+            <Text className="text-xs text-outline dark:text-onSurfaceVariant-dark">
               Fast. Smart. Utility.
             </Text>
           </View>

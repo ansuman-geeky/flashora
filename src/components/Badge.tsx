@@ -37,28 +37,28 @@ export interface BadgeProps {
 
 /** Background classes by variant */
 const VARIANT_BG_CLASSES: Record<BadgeVariant, string> = {
-  default: 'bg-border-subtle dark:bg-border-dark',
-  success: 'bg-accent-muted',
-  warning: 'bg-warning-muted',
-  error: 'bg-error-muted',
-  info: 'bg-info-muted',
-  premium: 'bg-primary-muted',
+  default: 'bg-surfaceVariant dark:bg-surfaceVariant-dark',
+  success: 'bg-secondaryContainer dark:bg-secondaryContainer-dark',
+  warning: 'bg-tertiaryContainer dark:bg-tertiaryContainer-dark',
+  error: 'bg-errorContainer dark:bg-errorContainer-dark',
+  info: 'bg-secondaryContainer dark:bg-secondaryContainer-dark',
+  premium: 'bg-primaryContainer dark:bg-primaryContainer-dark',
 };
 
 /** Text classes by variant */
 const VARIANT_TEXT_CLASSES: Record<BadgeVariant, string> = {
-  default: 'text-text-secondary dark:text-text-secondary-dark',
-  success: 'text-accent',
-  warning: 'text-warning',
-  error: 'text-error',
-  info: 'text-info',
-  premium: 'text-primary',
+  default: 'text-onSurfaceVariant dark:text-onSurfaceVariant-dark',
+  success: 'text-onSecondaryContainer dark:text-onSecondaryContainer-dark',
+  warning: 'text-onTertiaryContainer dark:text-onTertiaryContainer-dark',
+  error: 'text-onErrorContainer dark:text-onErrorContainer-dark',
+  info: 'text-onSecondaryContainer dark:text-onSecondaryContainer-dark',
+  premium: 'text-onPrimaryContainer dark:text-onPrimaryContainer-dark',
 };
 
 /** Size classes */
 const SIZE_CLASSES: Record<BadgeSize, string> = {
-  sm: 'px-1.5 py-0.5 rounded-sm',
-  md: 'px-2 py-0.5 rounded-sm',
+  sm: 'px-2 py-0.5 rounded-full',
+  md: 'px-3 py-1 rounded-full',
 };
 
 /** Text size classes */

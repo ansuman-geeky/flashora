@@ -37,14 +37,14 @@ export const CategoryStrip = React.memo(function CategoryStrip() {
           return (
             <Pressable
               key={key}
-              className="flex-row items-center mr-1.5 px-2 py-1 rounded-full border border-border dark:border-border-dark bg-surface dark:bg-surface-dark"
+              className="flex-row items-center mr-1.5 px-2 py-1 rounded-full border border-outlineVariant dark:border-outlineVariant-dark bg-surface dark:bg-surface-dark"
               onPress={() => router.push('/(tabs)/tools' as never)}
               accessibilityRole="button"
               accessibilityLabel={meta.label}
               style={{ elevation: 1 }}
             >
               <Icon size={16} color={meta.color} />
-              <Text className="text-sm font-medium text-text-primary dark:text-text-primary-dark ml-0.5">
+              <Text className="text-sm font-medium text-onSurface dark:text-onSurface-dark ml-0.5">
                 {meta.label}
               </Text>
             </Pressable>

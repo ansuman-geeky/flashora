@@ -49,7 +49,7 @@ export function ToolCard({
       >
         {/* Icon */}
         <View
-          className="w-[44px] h-[44px] rounded-md items-center justify-center mr-2"
+          className="w-[48px] h-[48px] rounded-full items-center justify-center mr-3"
           style={{ backgroundColor: `${color}15` }}
         >
           {icon}
@@ -58,15 +58,15 @@ export function ToolCard({
         {/* Text */}
         <View className="flex-1">
           <View className="flex-row items-center">
-            <Text className="text-base font-medium text-text-primary dark:text-text-primary-dark">
+            <Text className="text-base font-medium text-onSurface dark:text-onSurface-dark">
               {name}
             </Text>
             {isPremium && (
-              <Badge label="PRO" variant="premium" size="sm" className="ml-1" />
+              <Badge label="PRO" variant="premium" size="sm" className="ml-2" />
             )}
           </View>
           {description && (
-            <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5" numberOfLines={1}>
+            <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5" numberOfLines={1}>
               {description}
             </Text>
           )}
@@ -80,7 +80,7 @@ export function ToolCard({
     <Card
       variant="flat"
       onPress={onPress}
-      className={`items-center px-1 py-2 relative ${className}`}
+      className={`items-center px-1 py-3 relative ${className}`}
       style={style}
       accessibilityLabel={`${name}${isPremium ? ', premium' : ''}`}
     >
@@ -91,23 +91,23 @@ export function ToolCard({
             onToggleFavorite();
           }}
           style={({ pressed }) => [
-            { position: 'absolute', top: 6, right: 6, padding: 4, zIndex: 10 },
+            { position: 'absolute', top: 8, right: 8, padding: 4, zIndex: 10 },
             pressed && { transform: [{ scale: 0.8 }] },
           ]}
           accessibilityRole="button"
           accessibilityLabel={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
           <Heart
-            size={16}
-            color={isFavorite ? '#EF4444' : '#94A3B8'}
-            fill={isFavorite ? '#EF4444' : 'transparent'}
+            size={20}
+            color={isFavorite ? '#BA1A1A' : '#73777F'}
+            fill={isFavorite ? '#BA1A1A' : 'transparent'}
           />
         </Pressable>
       )}
 
       {/* Icon */}
       <View
-        className="w-[48px] h-[48px] rounded-lg items-center justify-center mb-1"
+        className="w-[56px] h-[56px] rounded-2xl items-center justify-center mb-2"
         style={{ backgroundColor: `${color}15` }}
       >
         {icon}
@@ -115,7 +115,7 @@ export function ToolCard({
 
       {/* Name */}
       <Text
-        className="text-sm font-medium text-text-primary dark:text-text-primary-dark text-center"
+        className="text-sm font-medium text-onSurface dark:text-onSurface-dark text-center px-1"
         numberOfLines={2}
       >
         {name}

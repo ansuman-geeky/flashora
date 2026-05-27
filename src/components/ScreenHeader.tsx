@@ -48,25 +48,25 @@ export function ScreenHeader({
 
   return (
     <View
-      className={`flex-row items-center h-[56px] px-1 ${className}`}
-      style={[{ backgroundColor: colors.bg }, style]}
+      className={`flex-row items-center h-[64px] px-2 ${className}`}
+      style={[{ backgroundColor: colors.surface }, style]}
     >
       {/* Back button */}
       {showBack ? (
         <IconButton
-          icon={<ChevronLeft size={24} color={colors.textPrimary} />}
+          icon={<ChevronLeft size={28} color={colors.onSurface} />}
           onPress={handleBack}
           accessibilityLabel="Go back"
           size="md"
           variant="ghost"
         />
       ) : (
-        <View className="w-[40px]" />
+        <View className="w-[48px]" />
       )}
 
       {/* Title */}
       <Text
-        className="flex-1 text-lg font-semibold text-text-primary dark:text-text-primary-dark mx-1"
+        className="flex-1 text-xl font-medium text-onSurface dark:text-onSurfaceDark mx-2"
         numberOfLines={1}
       >
         {title}

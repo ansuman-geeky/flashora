@@ -71,7 +71,7 @@ export function ErrorDisplay({
       <Text className="text-base font-semibold text-error mb-0.5">
         {errorInfo.title}
       </Text>
-      <Text className="text-sm text-text-secondary dark:text-text-secondary-dark leading-relaxed">
+      <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark leading-relaxed">
         {errorInfo.description}
       </Text>
       <View className="flex-row mt-2 gap-1.5">

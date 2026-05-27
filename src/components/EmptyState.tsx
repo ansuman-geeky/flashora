@@ -60,12 +60,12 @@ export function EmptyState({
       </View>
 
       {/* Title */}
-      <Text className="text-lg font-semibold text-text-primary dark:text-text-primary-dark text-center mb-0.5">
+      <Text className="text-lg font-semibold text-onSurface dark:text-onSurface-dark text-center mb-0.5">
         {title}
       </Text>
 
       {/* Description */}
-      <Text className="text-sm text-text-secondary dark:text-text-secondary-dark text-center max-w-[280px] leading-relaxed">
+      <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark text-center max-w-[280px] leading-relaxed">
         {description}
       </Text>
 

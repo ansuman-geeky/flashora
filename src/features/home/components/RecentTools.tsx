@@ -50,7 +50,7 @@ export const RecentTools = React.memo(function RecentTools() {
           <Card variant="flat" className="py-4">
             <View className="items-center">
               <Clock size={28} color={Colors.textTertiary} />
-              <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1 text-center">
+              <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-1 text-center">
                 No recent activity yet.{'\n'}Your used tools will appear here.
               </Text>
             </View>
@@ -75,10 +75,10 @@ export const RecentTools = React.memo(function RecentTools() {
                   <CategoryIcon size={20} color={entry.tool.color} />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-base font-medium text-text-primary dark:text-text-primary-dark">
+                  <Text className="text-base font-medium text-onSurface dark:text-onSurface-dark">
                     {entry.tool.name}
                   </Text>
-                  <Text className="text-xs text-text-tertiary dark:text-text-secondary-dark">
+                  <Text className="text-xs text-outline dark:text-onSurfaceVariant-dark">
                     {formatRelativeDate(entry.lastUsed)} · Used {entry.useCount}×
                   </Text>
                 </View>

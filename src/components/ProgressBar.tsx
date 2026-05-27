@@ -39,16 +39,16 @@ export interface ProgressBarProps {
 
 /** Fill color classes by variant */
 const VARIANT_FILL_CLASSES: Record<ProgressBarVariant, string> = {
-  default: 'bg-primary',
-  success: 'bg-accent',
-  error: 'bg-error',
+  default: 'bg-primary dark:bg-primary-dark',
+  success: 'bg-secondary dark:bg-secondary-dark',
+  error: 'bg-error dark:bg-error-dark',
 };
 
 /** Label text classes by variant */
 const VARIANT_LABEL_CLASSES: Record<ProgressBarVariant, string> = {
-  default: 'text-primary',
-  success: 'text-accent',
-  error: 'text-error',
+  default: 'text-primary dark:text-primary-dark',
+  success: 'text-secondary dark:text-secondary-dark',
+  error: 'text-error dark:text-error-dark',
 };
 
 export function ProgressBar({
@@ -112,7 +112,7 @@ export function ProgressBar({
         </View>
       )}
       <View
-        className="w-full rounded-full bg-border-subtle dark:bg-border-dark overflow-hidden"
+        className="w-full rounded-full bg-surfaceVariant dark:bg-surfaceVariant-dark overflow-hidden"
         style={{ height }}
         accessibilityRole="progressbar"
         accessibilityValue={{

@@ -35,10 +35,10 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
         <View className="w-[64px] h-[64px] rounded-full bg-accent-muted items-center justify-center mb-1.5">
           <CheckCircle size={32} color={Colors.accent} />
         </View>
-        <Text className="text-xl font-bold text-text-primary dark:text-text-primary-dark">
+        <Text className="text-xl font-bold text-onSurface dark:text-onSurface-dark">
           Done!
         </Text>
-        <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5 px-6 text-center">
+        <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5 px-6 text-center">
           {successMessage || `${toolName} completed successfully`}
         </Text>
       </View>
@@ -46,26 +46,26 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
       {/* Output info */}
       <Card variant="raised" className="p-2 mb-3">
         <View className="flex-row justify-between mb-1">
-          <Text className="text-sm text-text-secondary dark:text-text-secondary-dark">
+          <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark">
             Output
           </Text>
-          <Text className="text-sm font-medium text-text-primary dark:text-text-primary-dark">
+          <Text className="text-sm font-medium text-onSurface dark:text-onSurface-dark">
             {result.outputNames[0] ?? 'output'}
           </Text>
         </View>
         <View className="flex-row justify-between mb-1">
-          <Text className="text-sm text-text-secondary dark:text-text-secondary-dark">
+          <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark">
             Size
           </Text>
-          <Text className="text-sm font-medium text-text-primary dark:text-text-primary-dark">
+          <Text className="text-sm font-medium text-onSurface dark:text-onSurface-dark">
             {formatFileSize(result.fileSizeBytes)}
           </Text>
         </View>
         <View className="flex-row justify-between">
-          <Text className="text-sm text-text-secondary dark:text-text-secondary-dark">
+          <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark">
             Duration
           </Text>
-          <Text className="text-sm font-medium text-text-primary dark:text-text-primary-dark">
+          <Text className="text-sm font-medium text-onSurface dark:text-onSurface-dark">
             {formatDuration(result.durationMs)}
           </Text>
         </View>

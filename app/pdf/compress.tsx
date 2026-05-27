@@ -94,7 +94,7 @@ export default function PdfCompressScreen() {
 
         {file && (
           <View className="px-2 mt-2">
-            <Text className="text-sm font-medium text-text-primary dark:text-text-primary-dark mb-1">
+            <Text className="text-sm font-medium text-onSurface dark:text-onSurface-dark mb-1">
               Compression Level
             </Text>
             {(Object.keys(COMPRESSION_PRESETS) as CompressionQuality[]).map((key) => {
@@ -103,10 +103,10 @@ export default function PdfCompressScreen() {
               return (
                 <Pressable key={key} onPress={() => setQuality(key)} accessibilityRole="radio" accessibilityState={{ checked: isSelected }}>
                   <Card variant={isSelected ? 'raised' : 'flat'} className={`p-1.5 mb-1 ${isSelected ? 'border-primary' : ''}`}>
-                    <Text className="text-base font-medium text-text-primary dark:text-text-primary-dark">
+                    <Text className="text-base font-medium text-onSurface dark:text-onSurface-dark">
                       {preset.label}
                     </Text>
-                    <Text className="text-xs text-text-secondary dark:text-text-secondary-dark">
+                    <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">
                       {preset.description}
                     </Text>
                   </Card>

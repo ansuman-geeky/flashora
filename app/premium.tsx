@@ -113,10 +113,10 @@ export default function PremiumScreen() {
         >
           <Card variant="elevated" className="p-3 items-center">
             <ActivityIndicator size="large" color={Colors.primary} />
-            <Text className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mt-1">
+            <Text className="text-sm font-semibold text-onSurface dark:text-onSurface-dark mt-1">
               Processing Payment...
             </Text>
-            <Text className="text-xs text-text-secondary mt-0.5">
+            <Text className="text-xs text-onSurfaceVariant mt-0.5">
               Connecting with Google Play Store
             </Text>
           </Card>
@@ -132,10 +132,10 @@ export default function PremiumScreen() {
           <View className="w-[72px] h-[72px] rounded-full bg-primary-muted items-center justify-center mb-2">
             <Star size={36} color={Colors.primary} fill={Colors.primaryMuted} />
           </View>
-          <Text className="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+          <Text className="text-2xl font-bold text-onSurface dark:text-onSurface-dark">
             {isPremium ? "You're Premium!" : 'Go Premium'}
           </Text>
-          <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5 text-center px-4">
+          <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5 text-center px-4">
             {isPremium
               ? 'Enjoy unlimited access to all tools and features.'
               : 'Unlock the full power of Flashora.'}
@@ -156,8 +156,8 @@ export default function PremiumScreen() {
                 </View>
                 <Badge label={plan === 'yearly' ? 'YEARLY' : 'MONTHLY'} variant="success" size="sm" />
               </View>
-              <Text className="text-sm text-text-secondary dark:text-text-secondary-dark">
-                Expires on: <Text className="font-semibold text-text-primary dark:text-text-primary-dark">{formattedExpiry}</Text>
+              <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark">
+                Expires on: <Text className="font-semibold text-onSurface dark:text-onSurface-dark">{formattedExpiry}</Text>
               </Text>
               <Divider spacing="sm" />
               <View className="flex-row gap-1">
@@ -183,13 +183,13 @@ export default function PremiumScreen() {
             <>
               {/* Free tier */}
               <Card variant="flat" className="mb-2 p-2">
-                <Text className="text-md font-semibold text-text-primary dark:text-text-primary-dark mb-1.5">
+                <Text className="text-md font-semibold text-onSurface dark:text-onSurface-dark mb-1.5">
                   Free
                 </Text>
                 {FREE_FEATURES.map((feature) => (
                   <View key={feature} className="flex-row items-center mb-1">
                     <Check size={16} color={Colors.textTertiary} />
-                    <Text className="text-sm text-text-secondary dark:text-text-secondary-dark ml-1">
+                    <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark ml-1">
                       {feature}
                     </Text>
                   </View>
@@ -199,7 +199,7 @@ export default function PremiumScreen() {
               {/* Premium tier */}
               <Card variant="elevated" className="mb-3 p-2 border-primary">
                 <View className="flex-row items-center mb-1.5">
-                  <Text className="text-md font-semibold text-text-primary dark:text-text-primary-dark">
+                  <Text className="text-md font-semibold text-onSurface dark:text-onSurface-dark">
                     Premium
                   </Text>
                   <Badge label="RECOMMENDED" variant="premium" size="sm" className="ml-1" />
@@ -207,7 +207,7 @@ export default function PremiumScreen() {
                 {PREMIUM_FEATURES.map((feature) => (
                   <View key={feature} className="flex-row items-center mb-1">
                     <Check size={16} color={Colors.primary} />
-                    <Text className="text-sm text-text-primary dark:text-text-primary-dark ml-1">
+                    <Text className="text-sm text-onSurface dark:text-onSurface-dark ml-1">
                       {feature}
                     </Text>
                   </View>

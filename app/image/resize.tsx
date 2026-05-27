@@ -99,12 +99,12 @@ export default function ResizeImageScreen() {
 
         {file && (
           <View className="px-2 mt-4">
-            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
-              <Text className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-0.5">Selected Image</Text>
-              <Text className="text-xs text-text-secondary dark:text-text-secondary-dark">{file.name}</Text>
+            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark">
+              <Text className="text-sm font-semibold text-onSurface dark:text-onSurface-dark mb-0.5">Selected Image</Text>
+              <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">{file.name}</Text>
             </Card>
 
-            <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mb-2">Target Dimensions (Pixels)</Text>
+            <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-2">Target Dimensions (Pixels)</Text>
             <View className="flex-row gap-2">
               <View className="flex-1">
                 <Input
@@ -125,7 +125,7 @@ export default function ResizeImageScreen() {
                 />
               </View>
             </View>
-            <Text className="text-[10px] text-text-tertiary mt-1">* Leave one blank to maintain aspect ratio</Text>
+            <Text className="text-[10px] text-outline mt-1">* Leave one blank to maintain aspect ratio</Text>
 
             <View className="mt-6">
               <Button label="Resize Now" variant="primary" size="lg" fullWidth onPress={handleResize} disabled={!width && !height} />

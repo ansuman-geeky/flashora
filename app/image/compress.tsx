@@ -99,13 +99,13 @@ export default function CompressImageScreen() {
 
         {file && (
           <View className="px-2 mt-4">
-            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
-              <Text className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-0.5">Selected Image</Text>
-              <Text className="text-xs text-text-secondary dark:text-text-secondary-dark">{file.name}</Text>
-              <Text className="text-[10px] text-text-tertiary mt-0.5">Original size: {(file.size / 1024).toFixed(1)} KB</Text>
+            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark">
+              <Text className="text-sm font-semibold text-onSurface dark:text-onSurface-dark mb-0.5">Selected Image</Text>
+              <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">{file.name}</Text>
+              <Text className="text-[10px] text-outline mt-0.5">Original size: {(file.size / 1024).toFixed(1)} KB</Text>
             </Card>
 
-            <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mb-2">Select Compression Level</Text>
+            <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-2">Select Compression Level</Text>
             <View className="gap-2">
               {COMPRESSION_LEVELS.map((level) => {
                 const isActive = quality === level.value;
@@ -113,13 +113,13 @@ export default function CompressImageScreen() {
                   <Pressable
                     key={level.label}
                     onPress={() => setQuality(level.value)}
-                    className={`p-2 rounded-md border ${isActive ? 'bg-primary-muted border-primary' : 'bg-surface dark:bg-surface-dark border-border dark:border-border-dark'}`}
+                    className={`p-2 rounded-md border ${isActive ? 'bg-primary-muted border-primary' : 'bg-surface dark:bg-surface-dark border-outlineVariant dark:border-outlineVariant-dark'}`}
                   >
                     <View className="flex-row justify-between items-center">
-                      <Text className={`text-base font-semibold ${isActive ? 'text-primary' : 'text-text-primary dark:text-text-primary-dark'}`}>{level.label}</Text>
+                      <Text className={`text-base font-semibold ${isActive ? 'text-primary' : 'text-onSurface dark:text-onSurface-dark'}`}>{level.label}</Text>
                       {isActive && <View className="w-2 h-2 rounded-full bg-primary" />}
                     </View>
-                    <Text className={`text-xs ${isActive ? 'text-primary/70' : 'text-text-secondary dark:text-text-secondary-dark'}`}>{level.description}</Text>
+                    <Text className={`text-xs ${isActive ? 'text-primary/70' : 'text-onSurfaceVariant dark:text-onSurfaceVariant-dark'}`}>{level.description}</Text>
                   </Pressable>
                 );
               })}

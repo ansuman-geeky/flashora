@@ -52,7 +52,7 @@ export function SearchResults({ results, query }: SearchResultsProps) {
 
   return (
     <View className="px-2 pt-1">
-      <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mb-1">
+      <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-1">
         {results.length} result{results.length !== 1 ? 's' : ''}
       </Text>
       {results.map((tool) => {

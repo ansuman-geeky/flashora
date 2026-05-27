@@ -32,10 +32,10 @@ export function FilePickerButton({ label, description, onPress, disabled }: File
       >
         <Upload size={24} color={Colors.primary} />
       </View>
-      <Text className="text-base font-semibold text-text-primary dark:text-text-primary-dark">
+      <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark">
         {label}
       </Text>
-      <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5 text-center px-4">
+      <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5 text-center px-4">
         {description}
       </Text>
     </Card>

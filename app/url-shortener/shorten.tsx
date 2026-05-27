@@ -102,11 +102,11 @@ export default function UrlShortenerScreen() {
           </View>
         ) : (
           <View className="px-2 mt-2">
-            <Card variant="flat" className="p-4 mb-4 bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
-              <Text className="text-xs text-text-tertiary mb-1">Original URL</Text>
-              <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mb-4" numberOfLines={1}>{result.longUrl}</Text>
+            <Card variant="flat" className="p-4 mb-4 bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark">
+              <Text className="text-xs text-outline mb-1">Original URL</Text>
+              <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-4" numberOfLines={1}>{result.longUrl}</Text>
               
-              <Text className="text-xs text-text-tertiary mb-1">Shortened URL</Text>
+              <Text className="text-xs text-outline mb-1">Shortened URL</Text>
               <View className="flex-row items-center gap-2 mb-4">
                 <Text className="flex-1 text-lg font-bold text-primary">{result.shortUrl}</Text>
                 <Button label="" variant="ghost" size="sm" onPress={handleCopy} leftIcon={<Copy size={16} color={Colors.urlShortener} />} />
@@ -115,7 +115,7 @@ export default function UrlShortenerScreen() {
               <Button label="Share Link" variant="outline" onPress={handleShare} leftIcon={<Share2 size={18} color={Colors.urlShortener} />} />
             </Card>
 
-            <Text className="text-sm font-bold text-text-primary dark:text-text-primary-dark mx-2 mb-2 mt-4">QR Code for Link</Text>
+            <Text className="text-sm font-bold text-onSurface dark:text-onSurface-dark mx-2 mb-2 mt-4">QR Code for Link</Text>
             <QrGenerator 
               value={result.shortUrl} 
               onReset={handleReset}

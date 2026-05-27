@@ -58,11 +58,11 @@ function SettingsRow({
         {icon}
       </View>
       <View className="flex-1">
-        <Text className="text-base font-medium text-text-primary dark:text-text-primary-dark">
+        <Text className="text-base font-medium text-onSurface dark:text-onSurface-dark">
           {label}
         </Text>
         {value && (
-          <Text className="text-xs text-text-tertiary dark:text-text-secondary-dark mt-0.5">
+          <Text className="text-xs text-outline dark:text-onSurfaceVariant-dark mt-0.5">
             {value}
           </Text>
         )}
@@ -145,14 +145,14 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="px-2 pt-2 pb-1.5">
-          <Text className="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+          <Text className="text-2xl font-bold text-onSurface dark:text-onSurface-dark">
             Settings
           </Text>
         </View>
 
         {/* Theme section */}
         <View className="mb-3">
-          <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark px-2 mb-1">
+          <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark px-2 mb-1">
             APPEARANCE
           </Text>
           <ThemeSelector />
@@ -162,7 +162,7 @@ export default function SettingsScreen() {
 
         {/* General section */}
         <View className="mb-3">
-          <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark px-2 mb-1 mt-1.5">
+          <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark px-2 mb-1 mt-1.5">
             GENERAL
           </Text>
           <SettingsRow
@@ -223,7 +223,7 @@ export default function SettingsScreen() {
 
         {/* About section */}
         <View className="mb-3">
-          <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark px-2 mb-1 mt-1.5">
+          <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark px-2 mb-1 mt-1.5">
             ABOUT
           </Text>
           <SettingsRow
