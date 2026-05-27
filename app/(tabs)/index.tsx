@@ -133,7 +133,6 @@ export default function HomeScreen() {
                           name={tool.name}
                           icon={<Icon size={24} color={tool.color} />}
                           color={tool.color}
-                          isPremium={tool.isPremium}
                           onPress={() => router.push(tool.route as never)}
                           layout="grid"
                           isFavorite={true}

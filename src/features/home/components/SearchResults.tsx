@@ -16,6 +16,7 @@ import { EmptyState } from '@components/EmptyState';
 import { Colors } from '@design-system/tokens';
 import { logEvent } from '@services/analytics';
 import { Search } from 'lucide-react-native';
+import { useTheme } from '@hooks/useTheme';
 import type { Tool } from '@app-types/tool';
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -34,6 +35,7 @@ interface SearchResultsProps {
 
 export function SearchResults({ results, query }: SearchResultsProps) {
   const router = useRouter();
+  const { colors } = useTheme();
 
   const handlePress = (tool: Tool) => {
     logEvent('tool_open', { tool_id: tool.id, source: 'search' });
@@ -43,7 +45,7 @@ export function SearchResults({ results, query }: SearchResultsProps) {
   if (results.length === 0) {
     return (
       <EmptyState
-        icon={<Search size={28} color={Colors.textTertiary} />}
+        icon={<Search size={28} color={colors.onSurfaceVariant} />}
         title="No results"
         description={`No tools match "${query}". Try a different search term.`}
       />
@@ -64,7 +66,6 @@ export function SearchResults({ results, query }: SearchResultsProps) {
               description={tool.description}
               icon={<Icon size={22} color={tool.color} />}
               color={tool.color}
-              isPremium={tool.isPremium}
               onPress={() => handlePress(tool)}
               layout="list"
             />

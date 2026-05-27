@@ -9,7 +9,7 @@ import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { ErrorDisplay } from '@components/ErrorDisplay';
 import { FilePickerButton, FileList, ProcessingView, ResultView } from '@features/pdf/components';
-import { pickPdfFiles, getPdfPageCount, reorderPdf, shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { pickPdfFiles, getPdfPageCount, reorderPdf, shareFile, saveToGeneralStorage, ensureLocalUri } from '@features/pdf/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@hooks/useTheme';
@@ -39,7 +39,8 @@ export default function PdfReorderScreen() {
 
       if (PdfProcessorModule) {
         try {
-          const thumbnails = await PdfProcessorModule.renderPageThumbnails(picked[0].uri);
+          const localUri = await ensureLocalUri(picked[0].uri);
+          const thumbnails = await PdfProcessorModule.renderPageThumbnails(localUri);
           items = items.map((item, index) => ({
             ...item,
             thumbnailUri: thumbnails[index] ? `file://${thumbnails[index]}` : undefined
@@ -76,13 +77,13 @@ export default function PdfReorderScreen() {
           }}
           disabled={isActive}
         >
-          <GripVertical size={20} color={colors.textTertiary} style={{ marginRight: 12 }} />
+          <GripVertical size={20} color={colors.onSurfaceVariant} style={{ marginRight: 12 }} />
           {item.thumbnailUri ? (
             <Image source={{ uri: item.thumbnailUri }} style={{ width: 40, height: 50, marginRight: 12, borderRadius: 4, resizeMode: 'cover' }} />
           ) : (
-            <View style={{ width: 40, height: 50, marginRight: 12, backgroundColor: colors.border, borderRadius: 4 }} />
+            <View style={{ width: 40, height: 50, marginRight: 12, backgroundColor: colors.outlineVariant, borderRadius: 4 }} />
           )}
-          <Text className="flex-1 text-base font-medium" style={{ color: colors.textPrimary }}>
+          <Text className="flex-1 text-base font-medium" style={{ color: colors.onSurface }}>
             Page {item.originalIndex}
           </Text>
         </Card>
@@ -109,7 +110,7 @@ export default function PdfReorderScreen() {
           <>
             <FileList files={[file]} />
             <View className="flex-row items-center justify-between mt-4 mb-2">
-              <Text className="text-sm font-medium" style={{ color: colors.textPrimary }}>Long press and drag to reorder</Text>
+              <Text className="text-sm font-medium" style={{ color: colors.onSurface }}>Long press and drag to reorder</Text>
             </View>
             <DraggableFlatList
               data={pageData}

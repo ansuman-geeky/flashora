@@ -3,13 +3,13 @@ import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Colors, Shadow } from '@design-system/tokens';
 import { useTheme } from '@hooks/useTheme';
-import { Home, Grid, ScanLine, Settings, LucideIcon } from 'lucide-react-native';
+import { House, Wrench, ScanLine, Settings, LucideIcon } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 
 const ICON_MAP: Record<string, LucideIcon> = {
-  index: Home,
-  tools: Grid,
+  index: House,
+  tools: Wrench,
   scanner: ScanLine,
   settings: Settings,
 };
@@ -49,14 +49,14 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         styles.container, 
         { 
           backgroundColor: isDark ? colors.surface : colors.bg,
-          borderTopColor: isDark ? colors.border : 'rgba(0,0,0,0.05)',
+          borderTopColor: colors.outlineVariant,
         }
       ]}
     >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]!;
         const isFocused = state.index === index;
-        const Icon = ICON_MAP[route.name] || Home;
+        const Icon = ICON_MAP[route.name] || House;
         const label = LABEL_MAP[route.name] || route.name;
 
         return (
@@ -71,8 +71,8 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           >
             <View style={styles.iconContainer}>
               <Icon 
-                size={24} 
-                color={isFocused ? colors.onSecondaryContainer : (isDark ? colors.onSurfaceVariantDark : colors.onSurfaceVariant)} 
+                size={isFocused ? 24 : 22} 
+                color={isFocused ? colors.onSecondaryContainer : colors.onSurfaceVariant} 
                 strokeWidth={isFocused ? 2.5 : 2}
               />
               {isFocused && (
@@ -83,7 +83,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               style={[
                 styles.label, 
                 { 
-                  color: isFocused ? colors.onSurface : (isDark ? colors.onSurfaceVariantDark : colors.onSurfaceVariant),
+                  color: isFocused ? colors.onSurface : colors.onSurfaceVariant,
                   fontWeight: isFocused ? '600' : '500',
                 }
               ]}

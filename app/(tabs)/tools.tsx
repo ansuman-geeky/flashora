@@ -66,17 +66,12 @@ export default function ToolsScreen() {
   const router = useRouter();
   const favorites = useAppStore((s) => s.favorites);
   const toggleFavorite = useAppStore((s) => s.toggleFavorite);
-  const isPremiumUser = useAppStore((s) => s.isPremiumUser);
 
   const handleToolPress = useCallback(
     (tool: Tool) => {
-      if (tool.isPremium && !isPremiumUser) {
-        router.push('/premium' as never);
-        return;
-      }
       router.push(tool.route as never);
     },
-    [router, isPremiumUser]
+    [router]
   );
 
   const categories = Object.keys(CATEGORY_META);
@@ -120,7 +115,7 @@ export default function ToolsScreen() {
                         name={tool.name}
                         icon={<Icon size={24} color={tool.color} />}
                         color={tool.color}
-                        isPremium={tool.isPremium}
+
                         onPress={() => handleToolPress(tool)}
                         layout="grid"
                         isFavorite={favorites.includes(tool.id)}

@@ -61,6 +61,7 @@ export async function pickPdfFiles(multiple: boolean = false): Promise<FileInfo[
 
     return files;
   } catch (error) {
+    console.error('[pdfService] pickPdfFiles error:', error);
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.pickPdfFiles');
     throw createToolError('PROCESSING_FAILED', 'Failed to open file picker', error);
@@ -171,19 +172,23 @@ export async function mergePdfs(files: FileInfo[]): Promise<ToolResult> {
     const mergedPdf = await PDFDocument.create();
 
     for (const file of files) {
-      // Load one by one to avoid OOM
-      const base64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
+      const localUri = await ensureLocalUri(file.uri);
+      const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: FileSystem.EncodingType.Base64 });
       const pdfBytes = base64ToUint8Array(base64);
       const pdf = await PDFDocument.load(pdfBytes);
       const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
       copiedPages.forEach((page) => mergedPdf.addPage(page));
       
-      // Cleanup hints for GC if possible (not much we can do in JS, but avoiding parallel helps)
+      // Cleanup temp
+      if (localUri !== file.uri) {
+        await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+      }
     }
 
     const mergedPdfBytes = await mergedPdf.save({ useObjectStreams: true });
     return await savePdfResult(mergedPdfBytes, 'merged', startTime);
   } catch (error) {
+    console.error('[pdfService] mergePdfs error:', error);
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.mergePdfs');
     throw createToolError('PROCESSING_FAILED', 'Failed to merge PDFs', error);
@@ -195,8 +200,10 @@ export async function mergePdfs(files: FileInfo[]): Promise<ToolResult> {
  */
 export async function splitPdf(file: FileInfo, pages: number[]): Promise<ToolResult> {
   const startTime = Date.now();
+  let localUri = file.uri;
   try {
-    const base64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
+    localUri = await ensureLocalUri(file.uri);
+    const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: FileSystem.EncodingType.Base64 });
     const srcDoc = await PDFDocument.load(base64ToUint8Array(base64));
     const newDoc = await PDFDocument.create();
 
@@ -206,8 +213,15 @@ export async function splitPdf(file: FileInfo, pages: number[]): Promise<ToolRes
     copiedPages.forEach(p => newDoc.addPage(p));
 
     const bytes = await newDoc.save();
-    return await savePdfResult(bytes, 'split', startTime);
+    const result = await savePdfResult(bytes, 'split', startTime);
+
+    if (localUri !== file.uri) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    }
+
+    return result;
   } catch (error) {
+    console.error('[pdfService] splitPdf error:', error);
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.splitPdf');
     throw createToolError('PROCESSING_FAILED', 'Failed to split PDF', error);
@@ -221,18 +235,24 @@ import { PdfProcessorModule } from '../../../native/PdfProcessor';
  */
 export async function compressPdf(file: FileInfo, quality: CompressionQuality): Promise<ToolResult> {
   const startTime = Date.now();
+  let localUri = file.uri;
   try {
     if (!PdfProcessorModule) {
       throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available on this platform.');
     }
 
-    const outputPath = await PdfProcessorModule.compressPdf(file.uri, quality);
+    localUri = await ensureLocalUri(file.uri);
+    const outputPath = await PdfProcessorModule.compressPdf(localUri, quality);
     const outputUri = `file://${outputPath}`;
     const fileInfo = await FileSystem.getInfoAsync(outputUri);
 
     const outputName = generateOutputFilename('doc', 'compressed', 'pdf');
     const finalUri = `${FileSystem.cacheDirectory}${outputName}`;
     await FileSystem.moveAsync({ from: outputUri, to: finalUri });
+
+    if (localUri !== file.uri) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    }
 
     return {
       outputUris: [finalUri],
@@ -241,6 +261,7 @@ export async function compressPdf(file: FileInfo, quality: CompressionQuality): 
       fileSizeBytes: fileInfo.exists ? fileInfo.size : 0,
     };
   } catch (error) {
+    console.error('[pdfService] compressPdf error:', error);
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.compressPdf');
     throw createToolError('PROCESSING_FAILED', 'Failed to compress PDF', error);
@@ -317,18 +338,24 @@ export async function reorderPdf(file: FileInfo, pageOrder: number[]): Promise<T
  */
 export async function passwordProtectPdf(file: FileInfo, password: string): Promise<ToolResult> {
   const startTime = Date.now();
+  let localUri = file.uri;
   try {
     if (!PdfProcessorModule) {
       throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available on this platform.');
     }
 
-    const outputPath = await PdfProcessorModule.encryptPdf(file.uri, password, password);
+    localUri = await ensureLocalUri(file.uri);
+    const outputPath = await PdfProcessorModule.encryptPdf(localUri, password, password);
     const outputUri = `file://${outputPath}`;
     const fileInfo = await FileSystem.getInfoAsync(outputUri);
 
     const outputName = generateOutputFilename('doc', 'protected', 'pdf');
     const finalUri = `${FileSystem.cacheDirectory}${outputName}`;
     await FileSystem.moveAsync({ from: outputUri, to: finalUri });
+
+    if (localUri !== file.uri) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    }
 
     return {
       outputUris: [finalUri],
@@ -337,6 +364,7 @@ export async function passwordProtectPdf(file: FileInfo, password: string): Prom
       fileSizeBytes: fileInfo.exists ? fileInfo.size : 0,
     };
   } catch (error) {
+    console.error('[pdfService] passwordProtectPdf error:', error);
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.passwordProtectPdf');
     throw createToolError('PROCESSING_FAILED', 'Failed to protect PDF', error);
@@ -382,6 +410,26 @@ export async function saveToGeneralStorage(uri: string, filename: string, mimeTy
 }
 
 // ── Helpers ──
+
+/**
+ * Copies content:// URIs to a local file:// path in cache directory to ensure
+ * reliable access for native modules and large base64 reading.
+ */
+export async function ensureLocalUri(uri: string): Promise<string> {
+  if (uri.startsWith('file://')) return uri;
+  
+  try {
+    const filename = `temp_${Date.now()}_${Math.random().toString(36).substring(7)}.pdf`;
+    const localUri = `${FileSystem.cacheDirectory}${filename}`;
+    
+    // Copy the content:// file to local file:// cache
+    await FileSystem.copyAsync({ from: uri, to: localUri });
+    return localUri;
+  } catch (error) {
+    console.error('[pdfService] ensureLocalUri failed:', error);
+    return uri; // Fallback to original, might fail but worth trying
+  }
+}
 
 async function savePdfResult(bytes: Uint8Array, suffix: string, startTime: number): Promise<ToolResult> {
   const outputName = generateOutputFilename('doc', suffix, 'pdf');

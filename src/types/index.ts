@@ -16,11 +16,4 @@ export type {
   HistoryGroup,
 } from './history';
 
-export type {
-  PremiumPlan,
-  PremiumTier,
-  PremiumState,
-  FreeTierLimits,
-} from './premium';
 
-export { FREE_TIER_LIMITS, DEFAULT_PRICING } from './premium';

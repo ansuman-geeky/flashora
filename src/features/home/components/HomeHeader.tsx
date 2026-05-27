@@ -49,11 +49,11 @@ export function HomeHeader({
         placeholder="Search tools..."
         value={query}
         onChangeText={onQueryChange}
-        leftIcon={<Search size={18} color={colors.textTertiary} />}
+        leftIcon={<Search size={18} color={colors.onSurfaceVariant} />}
         rightIcon={
           isSearching ? (
             <IconButton
-              icon={<X size={16} color={colors.textTertiary} />}
+              icon={<X size={16} color={colors.onSurfaceVariant} />}
               onPress={onClearSearch}
               size="sm"
               variant="ghost"

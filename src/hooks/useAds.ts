@@ -6,7 +6,7 @@
  */
 
 import { useCallback } from 'react';
-import { usePremiumStore } from '@store/usePremiumStore';
+
 import { showInterstitial, showRewarded } from '@services/adService';
 import { recordError } from '@services/crashlytics';
 
@@ -20,18 +20,14 @@ interface UseAdsReturn {
 }
 
 export function useAds(): UseAdsReturn {
-  const isPremium = usePremiumStore((s) => s.tier === 'premium');
-
   const tryShowInterstitial = useCallback(async (): Promise<boolean> => {
-    if (isPremium) return false;
-
     try {
       return await showInterstitial();
     } catch (error) {
       recordError(error, 'useAds.tryShowInterstitial');
       return false;
     }
-  }, [isPremium]);
+  }, []);
 
   const tryShowRewarded = useCallback(async (): Promise<boolean> => {
     try {
@@ -43,7 +39,7 @@ export function useAds(): UseAdsReturn {
   }, []);
 
   return {
-    shouldShowAds: !isPremium,
+    shouldShowAds: true,
     tryShowInterstitial,
     tryShowRewarded,
   };

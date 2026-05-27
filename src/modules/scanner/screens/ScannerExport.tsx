@@ -113,16 +113,16 @@ export function ScannerExport() {
   if (!scan) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]} edges={['top']}>
-        <Text style={[styles.errorText, { color: colors.textSecondary }]}>Scan not found.</Text>
+        <Text style={[styles.errorText, { color: colors.onSurfaceVariant }]}>Scan not found.</Text>
       </SafeAreaView>
     );
   }
 
   const bgColor = isDark ? '#0D0F14' : colors.bg;
   const surfaceColor = isDark ? '#161A23' : colors.surface;
-  const borderColor = isDark ? '#252B38' : colors.border;
-  const textPrimary = isDark ? '#F1F5F9' : colors.textPrimary;
-  const textSecondary = isDark ? '#94A3B8' : colors.textSecondary;
+  const borderColor = isDark ? '#252B38' : colors.outlineVariant;
+  const textPrimary = isDark ? '#F1F5F9' : colors.onSurface;
+  const textSecondary = isDark ? '#94A3B8' : colors.onSurfaceVariant;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]} edges={['top']}>

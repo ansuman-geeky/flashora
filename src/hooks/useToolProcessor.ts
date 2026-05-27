@@ -11,7 +11,7 @@ import { logEvent } from '@services/analytics';
 import { recordError } from '@services/crashlytics';
 import { useHistoryStore } from '@store/useHistoryStore';
 import { useAds } from '@hooks/useAds';
-import { usePremiumStore } from '@store/usePremiumStore';
+
 import * as FileSystem from 'expo-file-system';
 
 interface UseToolProcessorOptions {
@@ -42,8 +42,7 @@ export function useToolProcessor({
 
   const addHistoryEntry = useHistoryStore((s) => s.addEntry);
   const { tryShowInterstitial } = useAds();
-  const canPerformPdfOp = usePremiumStore((s) => s.canPerformPdfOp);
-  const incrementPdfOps = usePremiumStore((s) => s.incrementPdfOps);
+
 
   useEffect(() => {
     isMounted.current = true;
@@ -65,15 +64,6 @@ export function useToolProcessor({
   const execute = useCallback(async (processFn: () => Promise<ToolResult>) => {
     if (!isMounted.current) return;
 
-    if (category === 'pdf' && !canPerformPdfOp()) {
-      setStatus('failed');
-      setError({
-        code: 'PREMIUM_REQUIRED',
-        message: 'You have reached your daily limit of 5 free PDF operations. Upgrade to Premium for unlimited access.',
-      });
-      return;
-    }
-
     setStatus('processing');
     setError(null);
     setResult(null);
@@ -83,10 +73,6 @@ export function useToolProcessor({
       const toolResult = await processFn();
 
       if (!isMounted.current) return;
-
-      if (category === 'pdf') {
-        incrementPdfOps();
-      }
 
       setResult(toolResult);
       resultRef.current = toolResult;
@@ -119,6 +105,8 @@ export function useToolProcessor({
       void tryShowInterstitial();
     } catch (err) {
       if (!isMounted.current) return;
+
+      console.error('[useToolProcessor] Error executing tool:', err);
 
       const toolError = isToolError(err)
         ? err

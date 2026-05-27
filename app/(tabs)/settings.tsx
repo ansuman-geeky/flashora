@@ -52,8 +52,8 @@ function SettingsRow({
       accessibilityLabel={label}
     >
       <View
-        className="w-[36px] h-[36px] rounded-md bg-primary-muted dark:bg-surface-dark items-center justify-center mr-1.5"
-        style={{ backgroundColor: isDark ? Colors.surfaceRaisedDark : Colors.primaryMuted }}
+        className="w-[36px] h-[36px] rounded-md items-center justify-center mr-1.5"
+        style={{ backgroundColor: `${colors.primary}15` }}
       >
         {icon}
       </View>
@@ -69,7 +69,7 @@ function SettingsRow({
       </View>
       {rightElement ?? (
         onPress ? (
-          <ChevronRight size={20} color={colors.textTertiary} />
+          <ChevronRight size={20} color={colors.onSurfaceVariant} />
         ) : null
       )}
     </Pressable>
@@ -90,7 +90,7 @@ function ThemeSelector() {
   return (
     <View
       className="mx-2 flex-row gap-0.5 rounded-md p-0.5"
-      style={{ backgroundColor: isDark ? Colors.borderDark : Colors.border }}
+      style={{ backgroundColor: colors.outlineVariant }}
     >
       {themes.map(({ mode, icon: Icon, label }) => {
         const isActive = themeMode === mode;
@@ -100,7 +100,7 @@ function ThemeSelector() {
             className={`flex-1 flex-row items-center justify-center py-1.5 rounded-sm`}
             style={{
               backgroundColor: isActive
-                ? isDark ? Colors.surfaceRaisedDark : Colors.surface
+                ? colors.surface
                 : 'transparent',
               elevation: isActive ? 1 : 0,
             }}
@@ -111,14 +111,14 @@ function ThemeSelector() {
           >
             <Icon
               size={14}
-              color={isActive ? Colors.primary : colors.textSecondary}
+              color={isActive ? colors.primary : colors.onSurfaceVariant}
             />
             <Text
               style={{
                 fontSize: 12,
                 marginLeft: 4,
                 fontWeight: isActive ? '600' : '400',
-                color: isActive ? Colors.primary : colors.textSecondary,
+                color: isActive ? colors.primary : colors.onSurfaceVariant,
               }}
             >
               {label}
@@ -165,14 +165,7 @@ export default function SettingsScreen() {
           <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark px-2 mb-1 mt-1.5">
             GENERAL
           </Text>
-          <SettingsRow
-            icon={<Star size={18} color={Colors.primary} />}
-            label="Premium"
-            value="Manage your subscription"
-            onPress={() => {
-              router.push('/premium' as never);
-            }}
-          />
+
           <SettingsRow
             icon={<Clock size={18} color={Colors.primary} />}
             label="Recent Activity"

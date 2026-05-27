@@ -13,14 +13,30 @@ import { Appearance } from 'react-native';
 export type ResolvedTheme = 'light' | 'dark';
 
 export interface ThemeColors {
+  primary: string;
+  onPrimary: string;
+  primaryContainer: string;
+  onPrimaryContainer: string;
+  secondary: string;
+  onSecondary: string;
+  secondaryContainer: string;
+  onSecondaryContainer: string;
+  tertiary: string;
+  onTertiary: string;
+  tertiaryContainer: string;
+  onTertiaryContainer: string;
+  error: string;
+  onError: string;
+  errorContainer: string;
+  onErrorContainer: string;
   bg: string;
+  onBg: string;
   surface: string;
-  surfaceRaised: string;
-  border: string;
-  textPrimary: string;
-  textSecondary: string;
-  textTertiary: string;
-  textInverse: string;
+  onSurface: string;
+  surfaceVariant: string;
+  onSurfaceVariant: string;
+  outline: string;
+  outlineVariant: string;
 }
 
 /**
@@ -47,24 +63,56 @@ export function useTheme(): {
 
   const colors: ThemeColors = isDark
     ? {
+        primary: Colors.primaryDark,
+        onPrimary: Colors.onPrimaryDark,
+        primaryContainer: Colors.primaryContainerDark,
+        onPrimaryContainer: Colors.onPrimaryContainerDark,
+        secondary: Colors.secondaryDark,
+        onSecondary: Colors.onSecondaryDark,
+        secondaryContainer: Colors.secondaryContainerDark,
+        onSecondaryContainer: Colors.onSecondaryContainerDark,
+        tertiary: Colors.tertiaryDark,
+        onTertiary: Colors.onTertiaryDark,
+        tertiaryContainer: Colors.tertiaryContainerDark,
+        onTertiaryContainer: Colors.onTertiaryContainerDark,
+        error: Colors.errorDark,
+        onError: Colors.onErrorDark,
+        errorContainer: Colors.errorContainerDark,
+        onErrorContainer: Colors.onErrorContainerDark,
         bg: Colors.bgDark,
+        onBg: Colors.onBgDark,
         surface: Colors.surfaceDark,
-        surfaceRaised: Colors.surfaceRaisedDark,
-        border: Colors.borderDark,
-        textPrimary: Colors.textPrimaryDark,
-        textSecondary: Colors.textSecondaryDark,
-        textTertiary: Colors.textSecondaryDark,
-        textInverse: Colors.textPrimary,
+        onSurface: Colors.onSurfaceDark,
+        surfaceVariant: Colors.surfaceVariantDark,
+        onSurfaceVariant: Colors.onSurfaceVariantDark,
+        outline: Colors.outlineDark,
+        outlineVariant: Colors.outlineVariantDark,
       }
     : {
+        primary: Colors.primary,
+        onPrimary: Colors.onPrimary,
+        primaryContainer: Colors.primaryContainer,
+        onPrimaryContainer: Colors.onPrimaryContainer,
+        secondary: Colors.secondary,
+        onSecondary: Colors.onSecondary,
+        secondaryContainer: Colors.secondaryContainer,
+        onSecondaryContainer: Colors.onSecondaryContainer,
+        tertiary: Colors.tertiary,
+        onTertiary: Colors.onTertiary,
+        tertiaryContainer: Colors.tertiaryContainer,
+        onTertiaryContainer: Colors.onTertiaryContainer,
+        error: Colors.error,
+        onError: Colors.onError,
+        errorContainer: Colors.errorContainer,
+        onErrorContainer: Colors.onErrorContainer,
         bg: Colors.bg,
+        onBg: Colors.onBg,
         surface: Colors.surface,
-        surfaceRaised: Colors.surfaceRaised,
-        border: Colors.border,
-        textPrimary: Colors.textPrimary,
-        textSecondary: Colors.textSecondary,
-        textTertiary: Colors.textTertiary,
-        textInverse: Colors.textInverse,
+        onSurface: Colors.onSurface,
+        surfaceVariant: Colors.surfaceVariant,
+        onSurfaceVariant: Colors.onSurfaceVariant,
+        outline: Colors.outline,
+        outlineVariant: Colors.outlineVariant,
       };
 
   return { theme: resolved, colors, isDark };

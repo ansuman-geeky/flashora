@@ -42,7 +42,7 @@ export function FileList({ files, onRemove }: FileListProps) {
           </View>
           {onRemove && (
             <IconButton
-              icon={<X size={16} color={colors.textTertiary} />}
+              icon={<X size={16} color={colors.onSurfaceVariant} />}
               onPress={() => onRemove(index)}
               size="sm"
               variant="ghost"

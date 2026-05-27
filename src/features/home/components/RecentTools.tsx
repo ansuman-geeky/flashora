@@ -10,6 +10,7 @@ import { SectionHeader } from '@components/SectionHeader';
 import { Card } from '@components/Card';
 import { EmptyState } from '@components/EmptyState';
 import { Colors } from '@design-system/tokens';
+import { useTheme } from '@hooks/useTheme';
 import { useRecentTools } from '../hooks/useRecentTools';
 import { logEvent } from '@services/analytics';
 import { formatRelativeDate } from '@utils/formatters';
@@ -27,6 +28,7 @@ const CATEGORY_ICONS: Record<ToolCategory, LucideIcon> = {
 
 export const RecentTools = React.memo(function RecentTools() {
   const router = useRouter();
+  const { colors } = useTheme();
   const recentTools = useRecentTools(6);
 
   const handlePress = (toolId: string, route: string) => {
@@ -49,7 +51,7 @@ export const RecentTools = React.memo(function RecentTools() {
         <View className="mx-2">
           <Card variant="flat" className="py-4">
             <View className="items-center">
-              <Clock size={28} color={Colors.textTertiary} />
+              <Clock size={28} color={colors.onSurfaceVariant} />
               <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-1 text-center">
                 No recent activity yet.{'\n'}Your used tools will appear here.
               </Text>

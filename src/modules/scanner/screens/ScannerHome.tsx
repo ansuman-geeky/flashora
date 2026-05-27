@@ -131,10 +131,10 @@ export function ScannerHome() {
 
   const bgColor = isDark ? '#0D0F14' : colors.bg;
   const surfaceColor = isDark ? '#161A23' : colors.surface;
-  const borderColor = isDark ? '#252B38' : colors.border;
-  const textPrimary = isDark ? '#F1F5F9' : colors.textPrimary;
-  const textSecondary = isDark ? '#94A3B8' : colors.textSecondary;
-  const textTertiary = isDark ? '#64748B' : colors.textTertiary;
+  const borderColor = isDark ? '#252B38' : colors.outlineVariant;
+  const textPrimary = isDark ? '#F1F5F9' : colors.onSurface;
+  const textSecondary = isDark ? '#94A3B8' : colors.onSurfaceVariant;
+  const textTertiary = isDark ? '#64748B' : colors.onSurfaceVariant;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]} edges={['top']}>

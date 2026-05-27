@@ -40,7 +40,7 @@ export function EmptyState({
   className = '',
   style,
 }: EmptyStateProps) {
-  const { isDark } = useTheme();
+  const { colors } = useTheme();
 
   return (
     <View
@@ -54,7 +54,7 @@ export function EmptyState({
       {/* Icon container with muted background circle */}
       <View
         className="w-[72px] h-[72px] rounded-full items-center justify-center mb-3"
-        style={{ backgroundColor: isDark ? Colors.surfaceRaisedDark : Colors.primaryMuted }}
+        style={{ backgroundColor: `${colors.primary}15` }}
       >
         {icon}
       </View>

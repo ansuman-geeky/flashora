@@ -24,7 +24,6 @@ if (typeof global.TextDecoder === 'undefined') {
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useTheme } from '@hooks/useTheme';
@@ -32,9 +31,7 @@ import mobileAds from 'react-native-google-mobile-ads';
 import { initAds } from '@services/adService';
 import { initRemoteConfig } from '@services/remoteConfig';
 import { SnackbarProvider } from '../src/contexts/SnackbarContext';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { View, ActivityIndicator } from 'react-native';
 
 export default function RootLayout() {
   const { isDark } = useTheme();
@@ -69,15 +66,12 @@ export default function RootLayout() {
     prepare();
   }, []);
 
-  useEffect(() => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately!
-      SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
   if (!appIsReady) {
-    return null;
+    return (
+      <View style={{ flex: 1, backgroundColor: isDark ? '#0D0F14' : '#F4F5F7', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#4A65E6" />
+      </View>
+    );
   }
 
   return (
@@ -116,10 +110,7 @@ export default function RootLayout() {
               name="url-shortener"
               options={{ headerShown: false, animation: 'slide_from_right' }}
             />
-            <Stack.Screen
-              name="premium"
-              options={{ headerShown: false, animation: 'slide_from_right' }}
-            />
+
             <Stack.Screen
               name="activity"
               options={{ headerShown: false, animation: 'slide_from_right' }}

@@ -8,6 +8,7 @@
 import React from 'react';
 import { View, Text, Pressable, type ViewStyle } from 'react-native';
 import { Heart } from 'lucide-react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 import { Card } from './Card';
 import { Badge } from './Badge';
 
@@ -20,8 +21,6 @@ export interface ToolCardProps {
   icon: React.ReactNode;
   /** Category color hex for the icon background */
   color: string;
-  /** Whether this is a premium-only tool */
-  isPremium?: boolean;
   /** Press handler */
   onPress: () => void;
   /** Layout mode */
@@ -34,10 +33,27 @@ export interface ToolCardProps {
 }
 
 export function ToolCard({
-  name, description, icon, color, isPremium = false,
+  name, description, icon, color,
   onPress, layout = 'grid', className = '', style,
   isFavorite = false, onToggleFavorite,
 }: ToolCardProps) {
+  const scale = useSharedValue(1);
+
+  const handleFavoritePress = (e: any) => {
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite();
+      scale.value = withSequence(
+        withTiming(1.1, { duration: 100 }),
+        withTiming(1, { duration: 100 })
+      );
+    }
+  };
+
+  const heartStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }]
+  }));
+
   if (layout === 'list') {
     return (
       <Card
@@ -45,7 +61,7 @@ export function ToolCard({
         onPress={onPress}
         className={`flex-row items-center p-2 ${className}`}
         style={style}
-        accessibilityLabel={`${name}${isPremium ? ', premium' : ''}`}
+        accessibilityLabel={name}
       >
         {/* Icon */}
         <View
@@ -61,9 +77,6 @@ export function ToolCard({
             <Text className="text-base font-medium text-onSurface dark:text-onSurface-dark">
               {name}
             </Text>
-            {isPremium && (
-              <Badge label="PRO" variant="premium" size="sm" className="ml-2" />
-            )}
           </View>
           {description && (
             <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5" numberOfLines={1}>
@@ -82,26 +95,25 @@ export function ToolCard({
       onPress={onPress}
       className={`items-center px-1 py-3 relative ${className}`}
       style={style}
-      accessibilityLabel={`${name}${isPremium ? ', premium' : ''}`}
+      accessibilityLabel={name}
     >
       {onToggleFavorite && (
         <Pressable
-          onPress={(e) => {
-            e.stopPropagation();
-            onToggleFavorite();
-          }}
+          onPress={handleFavoritePress}
           style={({ pressed }) => [
-            { position: 'absolute', top: 8, right: 8, padding: 4, zIndex: 10 },
-            pressed && { transform: [{ scale: 0.8 }] },
+            { position: 'absolute', top: 0, right: 0, padding: 8, zIndex: 10 },
+            pressed && { opacity: 0.8 },
           ]}
           accessibilityRole="button"
           accessibilityLabel={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart
-            size={20}
-            color={isFavorite ? '#BA1A1A' : '#73777F'}
-            fill={isFavorite ? '#BA1A1A' : 'transparent'}
-          />
+          <Animated.View style={heartStyle}>
+            <Heart
+              size={18}
+              color={isFavorite ? '#BA1A1A' : '#73777F'}
+              fill={isFavorite ? '#BA1A1A' : 'transparent'}
+            />
+          </Animated.View>
         </Pressable>
       )}
 
@@ -121,10 +133,6 @@ export function ToolCard({
         {name}
       </Text>
 
-      {/* Premium badge */}
-      {isPremium && (
-        <Badge label="PRO" variant="premium" size="sm" className="mt-0.5" />
-      )}
     </Card>
   );
 }

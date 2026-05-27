@@ -34,7 +34,7 @@ export default function AboutUsScreen() {
         </Text>
 
         <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark text-center leading-5 mb-4 px-2">
-          Flashora is an offline-first, privacy-focused utility toolbox designed to streamline your daily document, image, and QR code tasks. Built with performance and security in mind, Flashora does not rely on third-party cloud uploads, meaning your files stay strictly on your device.
+          Flashora is one of the products developed through the Flashsuite.pro platform and a privacy-based toolset to help you easily perform all kinds of daily operations with documents, images, and QR codes. The application was made with optimal performance and safety in mind, which is why there are no cloud transfers in Flashora.
         </Text>
 
         <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark self-start mt-4 mb-2">
@@ -48,15 +48,15 @@ export default function AboutUsScreen() {
           Features Portfolio
         </Text>
         <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark self-start leading-5 mb-4">
-          • **Doc Scanner**: Scan physical files and auto-crop pages with high resolution.{'\n'}
-          • **PDF Toolkit**: Seamlessly merge, split, compress, protect, and convert files locally.{'\n'}
-          • **Image Editor**: Compress, resize, crop, and convert images instantly.{'\n'}
-          • **QR Engine**: Scan and generate custom QR codes for networks, URLs, and text.{'\n'}
-          • **URL Shortener**: Shorten links directly using TinyURL API.
+          •Doc Scanner: Scan physical files and auto-crop pages with high resolution.{'\n'}
+          •PDF Toolkit: Seamlessly merge, split, compress, protect, and convert files locally.{'\n'}
+          •Image Editor: Compress, resize, crop, and convert images instantly.{'\n'}
+          •QR Engine: Scan and generate custom QR codes for networks, URLs, and text.{'\n'}
+          •URL Shortener: Shorten links directly using TinyURL API.
         </Text>
 
         <Text className="text-xs text-outline dark:text-onSurfaceVariant-dark text-center mt-6">
-          © 2026 Flashsuite. All rights reserved.
+          © 2026 Flashora | Flashsuite. All rights reserved.
         </Text>
       </ScrollView>
     </SafeAreaView>

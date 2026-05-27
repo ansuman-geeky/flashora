@@ -17,8 +17,6 @@ import { FilePickerButton, FileList, ProcessingView, ResultView } from '@feature
 import { pickPdfFiles, passwordProtectPdf, shareFile, saveToGeneralStorage } from '@features/pdf/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
-import { usePremiumStore } from '@store/usePremiumStore';
-import { Colors } from '@design-system/tokens';
 import { useRouter } from 'expo-router';
 import type { FileInfo } from '@utils/fileUtils';
 
@@ -28,7 +26,6 @@ export default function PdfPasswordScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const processor = useToolProcessor({ toolId: 'pdf_password', toolName: 'Password Lock', category: 'pdf' });
-  const isPremium = usePremiumStore((s) => s.tier === 'premium');
   const router = useRouter();
 
   const handlePick = useCallback(async () => {
@@ -46,24 +43,7 @@ export default function PdfPasswordScreen() {
   const passwordError = confirmPassword && password !== confirmPassword ? 'Passwords do not match' : undefined;
   const canProtect = file && password.length >= 4 && password === confirmPassword;
 
-  // Premium gate
-  if (!isPremium) {
-    return (
-      <SafeAreaView
-        className="flex-1 bg-bg dark:bg-bg-dark"
-        edges={['top']}
-      style={{ flex: 1, backgroundColor: colors.bg }}
-      >
-        <ScreenHeader title="Password Lock" />
-        <EmptyState
-          icon={<Lock size={32} color={Colors.primary} />}
-          title="Premium Feature"
-          description="Password protection is available with Flashora Premium. Upgrade to unlock this and other power features."
-          action={{ label: 'Go Premium', onPress: () => router.push('/(tabs)/premium' as never), variant: 'primary' }}
-        />
-      </SafeAreaView>
-    );
-  }
+
 
   if (processor.status === 'processing') return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: '#F4F5F7' }}><ScreenHeader title="Password Lock" showBack={true} /><ProcessingView toolName="Password Lock" progress={processor.progress} /></SafeAreaView>);
   if (processor.status === 'completed' && processor.result) return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}><ScreenHeader title="Password Lock" /><ResultView result={processor.result} onShare={(u) => { void shareFile(u); }} onDownload={(u, n) => { void saveToGeneralStorage(u, n); }} onBackToTools={() => router.replace('/(tabs)/tools')} onProcessAnother={handleReset} toolName="Password Lock" /></SafeAreaView>);
@@ -72,9 +52,9 @@ export default function PdfPasswordScreen() {
     <SafeAreaView
       className="flex-1 bg-bg dark:bg-bg-dark"
       edges={['top']}
-      style={{ flex: 1, backgroundColor: '#F4F5F7' }}
+      style={{ flex: 1, backgroundColor: colors.bg }}
     >
-      <ScreenHeader title="Password Lock" rightAction={<Badge label="PRO" variant="premium" />} />
+      <ScreenHeader title="Password Lock" />
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 32 }}>
         {processor.error && <View className="px-2 mb-2"><ErrorDisplay errorCode={processor.error.code} onRetry={handleReset} onDismiss={() => processor.reset()} /></View>}
         <FilePickerButton label="Select PDF" description="Choose a PDF to protect with a password" onPress={handlePick} />

@@ -104,7 +104,7 @@ export default function QrGenerateScreen() {
                       : 'bg-surface dark:bg-surface-dark border-outlineVariant dark:border-outlineVariant-dark'
                   }`}
                 >
-                  <Icon size={16} color={isSelected ? '#FFFFFF' : Colors.textSecondary} />
+                  <Icon size={16} color={isSelected ? '#FFFFFF' : colors.onSurfaceVariant} />
                   <Text
                     className={`ml-1.5 text-sm font-medium ${
                       isSelected ? 'text-white' : 'text-onSurfaceVariant dark:text-onSurfaceVariant-dark'

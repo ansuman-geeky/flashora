@@ -9,7 +9,7 @@ import { View, Text } from 'react-native';
 import { CheckCircle, Share2, RotateCcw } from 'lucide-react-native';
 import { Button } from '@components/Button';
 import { Card } from '@components/Card';
-import { Colors } from '@design-system/tokens';
+import { useTheme } from '@hooks/useTheme';
 import { formatFileSize, formatDuration } from '@utils/formatters';
 import type { ToolResult } from '@app-types/tool';
 
@@ -27,13 +27,14 @@ interface ResultViewProps {
 
 export function ResultView({ result, onShare, onDownload, onBackToTools, onProcessAnother, toolName, successMessage }: ResultViewProps) {
   const { showSnackbar } = useSnackbar();
+  const { colors } = useTheme();
 
   return (
     <View className="flex-1 px-2 pt-3">
       {/* Success indicator */}
       <View className="items-center mb-3">
-        <View className="w-[64px] h-[64px] rounded-full bg-accent-muted items-center justify-center mb-1.5">
-          <CheckCircle size={32} color={Colors.accent} />
+        <View className="w-[64px] h-[64px] rounded-full items-center justify-center mb-1.5" style={{ backgroundColor: `${colors.primary}15` }}>
+          <CheckCircle size={32} color={colors.primary} />
         </View>
         <Text className="text-xl font-bold text-onSurface dark:text-onSurface-dark">
           Done!
@@ -95,8 +96,8 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
               label="Download"
               variant="outline"
               className="flex-1"
-              style={{ backgroundColor: `${Colors.primary}25` }}
-              leftIcon={<CheckCircle size={20} color={Colors.primary} />}
+              style={{ backgroundColor: `${colors.primary}25` }}
+              leftIcon={<CheckCircle size={20} color={colors.primary} />}
               onPress={async () => {
                 if (result.outputUris[0]) {
                   try {
@@ -122,7 +123,7 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
           variant="ghost"
           size="md"
           fullWidth
-          leftIcon={<RotateCcw size={18} color={Colors.textSecondary} />}
+          leftIcon={<RotateCcw size={18} color={colors.onSurfaceVariant} />}
           onPress={onProcessAnother}
         />
       </View>

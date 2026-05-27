@@ -17,4 +17,5 @@ export {
   passwordProtectPdf,
   shareFile,
   saveToGeneralStorage,
+  ensureLocalUri,
 } from './pdfService';

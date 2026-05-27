@@ -35,7 +35,7 @@ export default function ActivityScreen() {
 
       {entries.length === 0 ? (
         <EmptyState
-          icon={<ClipboardList size={32} color={Colors.primary} />}
+          icon={<ClipboardList size={32} color={colors.primary} />}
           title="No Activity Yet"
           description="Your tool usage history will appear here. Start using a tool to see your activity."
         />
@@ -58,12 +58,12 @@ export default function ActivityScreen() {
               <View
                 className="px-1.5 py-0.5 rounded-sm"
                 style={{
-                  backgroundColor: item.success ? Colors.accentMuted : Colors.errorMuted,
+                  backgroundColor: item.success ? colors.primaryContainer : colors.errorContainer,
                 }}
               >
                 <Text
                   className="text-xs font-semibold"
-                  style={{ color: item.success ? Colors.accent : Colors.error }}
+                  style={{ color: item.success ? colors.onPrimaryContainer : colors.onErrorContainer }}
                 >
                   {item.success ? 'Success' : 'Failed'}
                 </Text>
