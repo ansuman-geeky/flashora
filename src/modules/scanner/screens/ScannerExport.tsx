@@ -29,12 +29,14 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import { useScannerHistory } from '../store/useScannerHistory';
-import { saveToGeneralStorage } from '@features/pdf/services';
+import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import { useSnackbar } from '../../../contexts/SnackbarContext';
 import { logEvent } from '@services/analytics';
 import { useTheme } from '@hooks/useTheme';
 import { Colors } from '@design-system/tokens';
+import { imagesToPdf } from '../../../features/pdf/services/pdfService';
+import { saveToFlashora } from '../../../services/storageService';
 
 type ExportFormat = 'pdf' | 'jpg';
 
@@ -63,21 +65,33 @@ export function ScannerExport() {
         renameScan(scan.id, fileName);
       }
 
-      if (format === 'pdf' && scan.pdfUri) {
-        await saveToGeneralStorage(scan.pdfUri, `${fileName}.pdf`);
-        showSnackbar('PDF saved successfully', 'success');
-      } else if (format === 'jpg' && scan.imageUris.length > 0) {
-        const { status } = await MediaLibrary.requestPermissionsAsync();
-        if (status !== 'granted') {
-          showSnackbar('Permission to access gallery was denied', 'error');
-          setIsSaving(false);
-          return;
+      if (format === 'pdf') {
+        let finalPdfUri = scan.pdfUri;
+        // Generate PDF on the fly if it hasn't been created yet!
+        if (!finalPdfUri && scan.imageUris.length > 0) {
+          const fakeFiles = scan.imageUris.map((uri, index) => ({
+            uri,
+            name: `page_${index}.jpg`,
+            size: 1000,
+            mimeType: 'image/jpeg',
+          }));
+          const result = await imagesToPdf(fakeFiles);
+          finalPdfUri = result.outputUris[0] ?? null;
         }
 
-        // Save first page as JPG to gallery for simplicity, 
-        // or loop if they want all pages (we save first page here)
-        await MediaLibrary.saveToLibraryAsync(scan.imageUris[0] as string);
-        showSnackbar('Image downloaded', 'success');
+        if (finalPdfUri) {
+          // Auto-save the PDF to the Scanner category
+          await saveToFlashora(finalPdfUri, 'Scanner', 'scan', '.pdf');
+          showSnackbar('Saved to Flashora', 'success', { label: 'View Files', onPress: () => router.push('/(tabs)/files' as any) });
+        } else {
+          showSnackbar('No images to generate PDF.', 'error');
+        }
+      } else {
+        // Save as JPG (first page for simplicity, or we can save to Flashora)
+        if (scan.imageUris.length > 0 && scan.imageUris[0]) {
+          await saveToFlashora(scan.imageUris[0], 'Scanner', 'scan_image', '.jpg');
+          showSnackbar('Saved to Flashora', 'success', { label: 'View Files', onPress: () => router.push('/(tabs)/files' as any) });
+        }
       }
     } catch (error) {
       console.warn('Save failed:', error);
@@ -85,7 +99,7 @@ export function ScannerExport() {
     } finally {
       setIsSaving(false);
     }
-  }, [scan, fileName, renameScan, format, showSnackbar]);
+  }, [scan, fileName, renameScan, format, showSnackbar, router]);
 
   const handleShare = useCallback(async () => {
     if (!scan) return;
@@ -270,6 +284,11 @@ export function ScannerExport() {
             <Text style={[styles.secondaryBtnText, { color: textSecondary }]}>Share</Text>
           </Pressable>
         </View>
+
+        {/* Info Text */}
+        <Text style={{ textAlign: 'center', fontSize: 12, color: textSecondary, marginTop: 16 }}>
+          Files will be securely saved to: Downloads / Flashora
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );

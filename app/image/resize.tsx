@@ -16,7 +16,7 @@ import { pickImages, resizeImage } from '@features/image/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import type { FileInfo } from '@utils/fileUtils';
 
 export default function ResizeImageScreen() {
@@ -70,8 +70,7 @@ export default function ResizeImageScreen() {
         <ScreenHeader title="Resize Image" />
         <ResultView
           result={processor.result}
-          onShare={(uri) => shareFile(uri)}
-          onDownload={(uri, name) => saveToGeneralStorage(uri, name, name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg')}
+          onShare={async (uri) => { void shareFile(uri); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Resize Image"

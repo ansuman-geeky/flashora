@@ -16,6 +16,5 @@ export {
   reorderPdf,
   passwordProtectPdf,
   shareFile,
-  saveToGeneralStorage,
   ensureLocalUri,
 } from './pdfService';

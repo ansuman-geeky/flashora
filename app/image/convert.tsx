@@ -15,7 +15,7 @@ import { pickImages, convertImage } from '@features/image/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import type { FileInfo } from '@utils/fileUtils';
 import type { ImageFormat } from '@features/image/types';
 
@@ -66,8 +66,7 @@ export default function ConvertImageScreen() {
         <ScreenHeader title="Convert Image" />
         <ResultView
           result={processor.result}
-          onShare={(uri) => shareFile(uri)}
-          onDownload={(uri, name) => saveToGeneralStorage(uri, name, name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg')}
+          onShare={async (uri) => { void shareFile(uri); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Convert Image"

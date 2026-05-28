@@ -14,7 +14,7 @@ import { Badge } from '@components/Badge';
 import { ErrorDisplay } from '@components/ErrorDisplay';
 import { EmptyState } from '@components/EmptyState';
 import { FilePickerButton, FileList, ProcessingView, ResultView } from '@features/pdf/components';
-import { pickPdfFiles, passwordProtectPdf, shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { pickPdfFiles, passwordProtectPdf, shareFile } from '@features/pdf/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
@@ -48,7 +48,7 @@ export default function PdfPasswordScreen() {
 
 
   if (processor.status === 'processing') return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: '#F4F5F7' }}><ScreenHeader title="Password Lock" showBack={true} /><ProcessingView toolName="Password Lock" progress={processor.progress} /></SafeAreaView>);
-  if (processor.status === 'completed' && processor.result) return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}><ScreenHeader title="Password Lock" /><ResultView result={processor.result} onShare={(u) => { void shareFile(u); }} onDownload={async (u, n) => { try { await saveToGeneralStorage(u, n); showSnackbar('Saved to device successfully', 'success'); } catch (err) { showSnackbar('Failed to save file', 'error'); } }} onBackToTools={() => router.replace('/(tabs)/tools')} onProcessAnother={handleReset} toolName="Password Lock" /></SafeAreaView>);
+  if (processor.status === 'completed' && processor.result) return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}><ScreenHeader title="Password Lock" /><ResultView result={processor.result} onShare={(u) => { void shareFile(u); }} onBackToTools={() => router.replace('/(tabs)/tools')} onProcessAnother={handleReset} toolName="Password Lock" /></SafeAreaView>);
 
   return (
     <SafeAreaView

@@ -3,13 +3,14 @@ import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Colors, Shadow } from '@design-system/tokens';
 import { useTheme } from '@hooks/useTheme';
-import { House, Wrench, ScanLine, Settings, LucideIcon } from 'lucide-react-native';
+import { House, Wrench, ScanLine, Settings, Folder, LucideIcon } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   index: House,
   tools: Wrench,
+  files: Folder,
   scanner: ScanLine,
   settings: Settings,
 };
@@ -17,6 +18,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 const LABEL_MAP: Record<string, string> = {
   index: 'Home',
   tools: 'Tools',
+  files: 'Files',
   scanner: 'Scanner',
   settings: 'Settings',
 };

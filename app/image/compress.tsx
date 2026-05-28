@@ -16,7 +16,7 @@ import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
 import { Colors } from '@design-system/tokens';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services'; // Reuse these
+import { shareFile } from '@features/pdf/services'; // Reuse these
 import type { FileInfo } from '@utils/fileUtils';
 
 const COMPRESSION_LEVELS = [
@@ -70,8 +70,7 @@ export default function CompressImageScreen() {
         <ScreenHeader title="Compress Image" />
         <ResultView
           result={processor.result}
-          onShare={(uri) => shareFile(uri)}
-          onDownload={(uri, name) => saveToGeneralStorage(uri, name, name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg')}
+          onShare={async (uri) => { void shareFile(uri); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Compress Image"

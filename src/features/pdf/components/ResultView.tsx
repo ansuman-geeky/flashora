@@ -12,22 +12,33 @@ import { Card } from '@components/Card';
 import { useTheme } from '@hooks/useTheme';
 import { formatFileSize, formatDuration } from '@utils/formatters';
 import type { ToolResult } from '@app-types/tool';
+import { useRouter } from 'expo-router';
+import * as IntentLauncher from 'expo-intent-launcher';
+import { Platform } from 'react-native';
 
 import { useSnackbar } from '../../../contexts/SnackbarContext';
 
 interface ResultViewProps {
   result: ToolResult;
   onShare: (uri: string) => void | Promise<void>;
-  onDownload?: (uri: string, filename: string) => void | Promise<void>;
   onBackToTools: () => void;
   onProcessAnother: () => void;
   toolName: string;
   successMessage?: string;
 }
 
-export function ResultView({ result, onShare, onDownload, onBackToTools, onProcessAnother, toolName, successMessage }: ResultViewProps) {
+export function ResultView({ result, onShare, onBackToTools, onProcessAnother, toolName, successMessage }: ResultViewProps) {
   const { showSnackbar } = useSnackbar();
   const { colors } = useTheme();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    showSnackbar(
+      '✓ Saved Successfully\nStored in Flashora',
+      'success',
+      { label: 'View Files', onPress: () => router.push('/(tabs)/files' as any) }
+    );
+  }, []);
 
   return (
     <View className="flex-1 px-2 pt-3">
@@ -42,6 +53,11 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
         <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5 px-6 text-center">
           {successMessage || `${toolName} completed successfully`}
         </Text>
+        <View className="mt-2 py-1 px-3 rounded-md" style={{ backgroundColor: `${colors.primary}10`, borderWidth: 0.5, borderColor: `${colors.primary}30` }}>
+          <Text className="text-xs text-center font-medium" style={{ color: colors.primary }}>
+            Stored securely in: Downloads / Flashora
+          </Text>
+        </View>
       </View>
 
       {/* Output info */}
@@ -84,33 +100,50 @@ export function ResultView({ result, onShare, onDownload, onBackToTools, onProce
               if (result.outputUris[0]) {
                 try {
                   await onShare(result.outputUris[0]);
-                  showSnackbar('Saved successfully', 'success');
+                } catch (e) {}
+              }
+            }}
+          />
+          <Button
+            label="Open"
+            variant="outline"
+            className="flex-1"
+            style={{ backgroundColor: `${colors.primary}25` }}
+            leftIcon={<CheckCircle size={20} color={colors.primary} />}
+            onPress={async () => {
+              if (result.outputUris[0]) {
+                try {
+                  if (Platform.OS === 'android') {
+                    const { NativeModules } = require('react-native');
+                    if (NativeModules.StorageModule && NativeModules.StorageModule.openFile) {
+                      let mimeType = 'application/pdf';
+                      if (result.outputNames[0]?.endsWith('.jpg')) mimeType = 'image/jpeg';
+                      await NativeModules.StorageModule.openFile(result.outputUris[0], mimeType);
+                    } else {
+                      await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+                        data: result.outputUris[0],
+                        flags: 1,
+                      });
+                    }
+                  } else {
+                    await onShare(result.outputUris[0]);
+                  }
                 } catch (e) {
-                  // error handled by service
+                  showSnackbar('Could not open file', 'error');
                 }
               }
             }}
           />
-          {onDownload && (
-            <Button
-              label="Download"
-              variant="outline"
-              className="flex-1"
-              style={{ backgroundColor: `${colors.primary}25` }}
-              leftIcon={<CheckCircle size={20} color={colors.primary} />}
-              onPress={async () => {
-                if (result.outputUris[0]) {
-                  try {
-                    await onDownload(result.outputUris[0], result.outputNames[0] || 'file.pdf');
-                    showSnackbar('Saved successfully', 'success');
-                  } catch (e) {
-                    // error handled by service
-                  }
-                }
-              }}
-            />
-          )}
         </View>
+        <Button
+          label="Download to Device"
+          variant="outline"
+          size="lg"
+          fullWidth
+          onPress={() => {
+            showSnackbar('Saved to Downloads/Flashora', 'success', { label: 'View', onPress: () => router.push('/(tabs)/files' as any) });
+          }}
+        />
         <Button
           label="Back to Tools"
           variant="outline"

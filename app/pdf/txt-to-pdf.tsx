@@ -14,7 +14,7 @@ import { converterService } from '@features/converter/services/converterService'
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import * as DocumentPicker from 'expo-document-picker';
 import { getFileInfo, type FileInfo } from '@utils/fileUtils';
 
@@ -79,7 +79,6 @@ export default function TxtToPdfScreen() {
         <ResultView
           result={processor.result}
           onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="TXT to PDF"

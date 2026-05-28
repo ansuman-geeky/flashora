@@ -9,7 +9,7 @@ import { ScreenHeader } from '@components/ScreenHeader';
 import { Button } from '@components/Button';
 import { ErrorDisplay } from '@components/ErrorDisplay';
 import { FilePickerButton, FileList, ProcessingView, ResultView } from '@features/pdf/components';
-import { pickImageFiles, imagesToPdf, shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { pickImageFiles, imagesToPdf, shareFile } from '@features/pdf/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@hooks/useTheme';
@@ -60,7 +60,6 @@ export default function ImageToPdfScreen() {
         <ResultView
           result={processor.result}
           onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Image to PDF"

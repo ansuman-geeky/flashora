@@ -14,7 +14,7 @@ import { ImagePickerButton } from '@features/image/components/ImagePickerButton'
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import * as ImagePicker from 'expo-image-picker';
 import { getFileInfo, type FileInfo } from '@utils/fileUtils';
 
@@ -63,7 +63,6 @@ export default function CropImageScreen() {
         <ResultView
           result={processor.result}
           onShare={(uri) => shareFile(uri)}
-          onDownload={(uri, name) => saveToGeneralStorage(uri, name, name.endsWith('.png') ? 'image/png' : name.endsWith('.webp') ? 'image/webp' : 'image/jpeg')}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Crop Image"

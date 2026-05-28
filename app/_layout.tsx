@@ -33,37 +33,34 @@ import { initRemoteConfig } from '@services/remoteConfig';
 import { SnackbarProvider } from '../src/contexts/SnackbarContext';
 import { View, ActivityIndicator } from 'react-native';
 
+import * as MediaLibrary from 'expo-media-library';
+
 export default function RootLayout() {
   const { isDark } = useTheme();
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        // Initialize AdMob
-        try {
-          await mobileAds().initialize();
-          initAds();
-          console.log('[AdMob] Initialized successfully and pre-loading ads');
-        } catch (adError) {
-          console.warn('[AdMob] Initialization failed:', adError);
-        }
+    // Request storage permissions directly on app launch
+    MediaLibrary.requestPermissionsAsync().then((status) => {
+      console.log('[Permissions] Storage status:', status.status);
+    }).catch(e => console.warn('Permission error', e));
 
-        // Initialize Firebase Remote Config
-        try {
-          await initRemoteConfig();
-          console.log('[RemoteConfig] Initialized successfully');
-        } catch (rcError) {
-          console.warn('[RemoteConfig] Initialization failed:', rcError);
-        }
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
+    // Fire off background services without blocking UI
+    mobileAds().initialize().then(() => {
+      initAds();
+      console.log('[AdMob] Initialized successfully and pre-loading ads');
+    }).catch((adError) => {
+      console.warn('[AdMob] Initialization failed:', adError);
+    });
 
-    prepare();
+    initRemoteConfig().then(() => {
+      console.log('[RemoteConfig] Initialized successfully');
+    }).catch((rcError) => {
+      console.warn('[RemoteConfig] Initialization failed:', rcError);
+    });
+
+    // Immediately unblock the UI so the user doesn't wait 1+ minutes
+    setAppIsReady(true);
   }, []);
 
   if (!appIsReady) {

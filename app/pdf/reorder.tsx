@@ -9,7 +9,7 @@ import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { ErrorDisplay } from '@components/ErrorDisplay';
 import { FilePickerButton, FileList, ProcessingView, ResultView } from '@features/pdf/components';
-import { pickPdfFiles, getPdfPageCount, reorderPdf, shareFile, saveToGeneralStorage, ensureLocalUri } from '@features/pdf/services';
+import { pickPdfFiles, getPdfPageCount, reorderPdf, shareFile, ensureLocalUri } from '@features/pdf/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@hooks/useTheme';
@@ -92,7 +92,7 @@ export default function PdfReorderScreen() {
   };
 
   if (processor.status === 'processing') return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}><ScreenHeader title="Reorder Pages" showBack={true} /><ProcessingView toolName="Reorder Pages" progress={processor.progress} /></SafeAreaView>);
-  if (processor.status === 'completed' && processor.result) return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}><ScreenHeader title="Reorder Pages" /><ResultView result={processor.result} onShare={(u) => { void shareFile(u); }} onDownload={(u, n) => { void saveToGeneralStorage(u, n); }} onBackToTools={() => router.replace('/(tabs)/tools')} onProcessAnother={handleReset} toolName="Reorder Pages" /></SafeAreaView>);
+  if (processor.status === 'completed' && processor.result) return (<SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}><ScreenHeader title="Reorder Pages" /><ResultView result={processor.result} onShare={(u) => { void shareFile(u); }} onBackToTools={() => router.replace('/(tabs)/tools')} onProcessAnother={handleReset} toolName="Reorder Pages" /></SafeAreaView>);
 
   return (
     <SafeAreaView

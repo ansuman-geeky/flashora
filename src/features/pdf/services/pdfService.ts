@@ -12,16 +12,14 @@ import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { PDFDocument } from 'pdf-lib';
-import { recordError } from '@services/crashlytics';
-import {
+import { 
+  generateOutputFilename, 
+  type FileInfo, 
   validateFile,
   validateBatch,
-  generateOutputFilename,
-  base64ToUint8Array,
-  uint8ArrayToBase64,
-  type FileInfo,
 } from '@utils/fileUtils';
+import { recordError } from '@services/crashlytics';
+import { saveToFlashora } from '../../../services/storageService';
 import { SUPPORTED_FORMATS, FILE_LIMITS } from '@constants/config';
 import type { ToolError, ToolResult } from '@app-types/tool';
 import type { CompressionQuality } from '../types';
@@ -73,9 +71,11 @@ export async function pickPdfFiles(multiple: boolean = false): Promise<FileInfo[
  */
 export async function getPdfPageCount(uri: string): Promise<number> {
   try {
-    const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-    const pdfDoc = await PDFDocument.load(base64ToUint8Array(base64));
-    return pdfDoc.getPageCount();
+    if (PdfProcessorModule) {
+      const localUri = await ensureLocalUri(uri);
+      return await PdfProcessorModule.getPageCount(localUri);
+    }
+    return 0;
   } catch (error) {
     recordError(error, 'pdfService.getPdfPageCount');
     return 0;
@@ -169,24 +169,31 @@ export async function mergePdfs(files: FileInfo[]): Promise<ToolResult> {
     const hasStorage = await checkStorage();
     if (!hasStorage) throw createToolError('STORAGE_FULL', 'Not enough storage space');
 
-    const mergedPdf = await PDFDocument.create();
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available.');
+    }
 
-    for (const file of files) {
-      const localUri = await ensureLocalUri(file.uri);
-      const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: FileSystem.EncodingType.Base64 });
-      const pdfBytes = base64ToUint8Array(base64);
-      const pdf = await PDFDocument.load(pdfBytes);
-      const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-      copiedPages.forEach((page) => mergedPdf.addPage(page));
-      
-      // Cleanup temp
-      if (localUri !== file.uri) {
-        await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    const uris = await Promise.all(files.map(f => ensureLocalUri(f.uri)));
+    const outputPath = await PdfProcessorModule.mergePdfs(uris);
+    const outputUri = `file://${outputPath}`;
+    
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'merged', '.pdf');
+
+    // Cleanup temp files
+    for (let i = 0; i < uris.length; i++) {
+      const uri = uris[i];
+      const fileUri = files[i]?.uri;
+      if (uri && fileUri && uri !== fileUri) {
+        await FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
       }
     }
 
-    const mergedPdfBytes = await mergedPdf.save({ useObjectStreams: true });
-    return await savePdfResult(mergedPdfBytes, 'merged', startTime);
+    return {
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: savedFile.size,
+    };
   } catch (error) {
     console.error('[pdfService] mergePdfs error:', error);
     if (isToolError(error)) throw error;
@@ -202,24 +209,30 @@ export async function splitPdf(file: FileInfo, pages: number[]): Promise<ToolRes
   const startTime = Date.now();
   let localUri = file.uri;
   try {
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available.');
+    }
+
     localUri = await ensureLocalUri(file.uri);
-    const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: FileSystem.EncodingType.Base64 });
-    const srcDoc = await PDFDocument.load(base64ToUint8Array(base64));
-    const newDoc = await PDFDocument.create();
-
-    // pages are 1-indexed from UI
-    const indices = pages.map(p => p - 1).filter(i => i >= 0 && i < srcDoc.getPageCount());
-    const copiedPages = await newDoc.copyPages(srcDoc, indices);
-    copiedPages.forEach(p => newDoc.addPage(p));
-
-    const bytes = await newDoc.save();
-    const result = await savePdfResult(bytes, 'split', startTime);
+    
+    // pages are 1-indexed from UI, converting to 0-indexed for Native
+    const indices = pages.map(p => p - 1);
+    
+    const outputPath = await PdfProcessorModule.splitPdf(localUri, indices);
+    const outputUri = `file://${outputPath}`;
+    
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'split', '.pdf');
 
     if (localUri !== file.uri) {
       await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
     }
 
-    return result;
+    return {
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: savedFile.size,
+    };
   } catch (error) {
     console.error('[pdfService] splitPdf error:', error);
     if (isToolError(error)) throw error;
@@ -246,19 +259,17 @@ export async function compressPdf(file: FileInfo, quality: CompressionQuality): 
     const outputUri = `file://${outputPath}`;
     const fileInfo = await FileSystem.getInfoAsync(outputUri);
 
-    const outputName = generateOutputFilename('doc', 'compressed', 'pdf');
-    const finalUri = `${FileSystem.cacheDirectory}${outputName}`;
-    await FileSystem.moveAsync({ from: outputUri, to: finalUri });
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'compressed', '.pdf');
 
     if (localUri !== file.uri) {
       await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
     }
 
     return {
-      outputUris: [finalUri],
-      outputNames: [outputName],
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
       durationMs: Date.now() - startTime,
-      fileSizeBytes: fileInfo.exists ? fileInfo.size : 0,
+      fileSizeBytes: savedFile.size,
     };
   } catch (error) {
     console.error('[pdfService] compressPdf error:', error);
@@ -274,33 +285,34 @@ export async function compressPdf(file: FileInfo, quality: CompressionQuality): 
 export async function imagesToPdf(images: FileInfo[]): Promise<ToolResult> {
   const startTime = Date.now();
   try {
-    const pdfDoc = await PDFDocument.create();
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available.');
+    }
 
-    for (const image of images) {
-      // 1. Preprocess: Resize/Compress if it's a huge image
-      const processedUri = await preprocessImageForPdf(image.uri, image.size);
-      
-      // 2. Read as base64 (one at a time)
-      const base64 = await FileSystem.readAsStringAsync(processedUri, { 
-        encoding: FileSystem.EncodingType.Base64 
-      });
-      const imgBytes = base64ToUint8Array(base64);
+    // 1. Preprocess: Resize/Compress
+    const processedUris = await Promise.all(images.map(img => preprocessImageForPdf(img.uri, img.size)));
+    
+    // 2. Generate PDF natively
+    const outputPath = await PdfProcessorModule.imagesToPdf(processedUris);
+    const outputUri = `file://${outputPath}`;
+    
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'from_images', '.pdf');
 
-      let pdfImg;
-      // We always convert to JPEG in preprocessing for consistency and size
-      pdfImg = await pdfDoc.embedJpg(imgBytes);
-
-      const page = pdfDoc.addPage([pdfImg.width, pdfImg.height]);
-      page.drawImage(pdfImg, { x: 0, y: 0, width: pdfImg.width, height: pdfImg.height });
-      
-      // 3. Cleanup temp file if we created one
-      if (processedUri !== image.uri) {
-        await FileSystem.deleteAsync(processedUri, { idempotent: true }).catch(() => {});
+    // 3. Cleanup temp files
+    for (let i = 0; i < processedUris.length; i++) {
+      const uri = processedUris[i];
+      const imgUri = images[i]?.uri;
+      if (uri && imgUri && uri !== imgUri) {
+        await FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
       }
     }
 
-    const bytes = await pdfDoc.save({ useObjectStreams: true });
-    return await savePdfResult(bytes, 'from_images', startTime);
+    return {
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: savedFile.size,
+    };
   } catch (error) {
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.imagesToPdf');
@@ -316,16 +328,28 @@ export async function imagesToPdf(images: FileInfo[]): Promise<ToolResult> {
 export async function reorderPdf(file: FileInfo, pageOrder: number[]): Promise<ToolResult> {
   const startTime = Date.now();
   try {
-    const base64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
-    const srcDoc = await PDFDocument.load(base64ToUint8Array(base64));
-    const newDoc = await PDFDocument.create();
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available.');
+    }
 
+    const localUri = await ensureLocalUri(file.uri);
     const indices = pageOrder.map(p => p - 1);
-    const copiedPages = await newDoc.copyPages(srcDoc, indices);
-    copiedPages.forEach(p => newDoc.addPage(p));
+    
+    const outputPath = await PdfProcessorModule.splitPdf(localUri, indices);
+    const outputUri = `file://${outputPath}`;
+    
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'reordered', '.pdf');
 
-    const bytes = await newDoc.save();
-    return await savePdfResult(bytes, 'reordered', startTime);
+    if (localUri !== file.uri) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    }
+
+    return {
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: savedFile.size,
+    };
   } catch (error) {
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.reorderPdf');
@@ -349,19 +373,17 @@ export async function passwordProtectPdf(file: FileInfo, password: string): Prom
     const outputUri = `file://${outputPath}`;
     const fileInfo = await FileSystem.getInfoAsync(outputUri);
 
-    const outputName = generateOutputFilename('doc', 'protected', 'pdf');
-    const finalUri = `${FileSystem.cacheDirectory}${outputName}`;
-    await FileSystem.moveAsync({ from: outputUri, to: finalUri });
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'protected', '.pdf');
 
     if (localUri !== file.uri) {
       await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
     }
 
     return {
-      outputUris: [finalUri],
-      outputNames: [outputName],
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
       durationMs: Date.now() - startTime,
-      fileSizeBytes: fileInfo.exists ? fileInfo.size : 0,
+      fileSizeBytes: savedFile.size,
     };
   } catch (error) {
     console.error('[pdfService] passwordProtectPdf error:', error);
@@ -387,27 +409,7 @@ export async function shareFile(uri: string): Promise<void> {
   }
 }
 
-/**
- * Save a file to general storage (Downloads/Documents).
- */
-export async function saveToGeneralStorage(uri: string, filename: string, mimeType: string = 'application/pdf'): Promise<void> {
-  try {
-    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-    if (permissions.granted) {
-      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename, mimeType)
-        .then(async (safUri) => {
-          await FileSystem.writeAsStringAsync(safUri, base64, { encoding: FileSystem.EncodingType.Base64 });
-        });
-    } else {
-      throw createToolError('PERMISSION_DENIED', 'Storage permission denied');
-    }
-  } catch (error) {
-    if (isToolError(error)) throw error;
-    recordError(error, 'pdfService.saveToGeneralStorage');
-    throw createToolError('PROCESSING_FAILED', 'Failed to save file', error);
-  }
-}
+// Remove saveToGeneralStorage as it is replaced by saveToFlashora
 
 // ── Helpers ──
 
@@ -431,20 +433,7 @@ export async function ensureLocalUri(uri: string): Promise<string> {
   }
 }
 
-async function savePdfResult(bytes: Uint8Array, suffix: string, startTime: number): Promise<ToolResult> {
-  const outputName = generateOutputFilename('doc', suffix, 'pdf');
-  const outputUri = `${FileSystem.cacheDirectory}${outputName}`;
-  const base64 = uint8ArrayToBase64(bytes);
 
-  await FileSystem.writeAsStringAsync(outputUri, base64, { encoding: FileSystem.EncodingType.Base64 });
-
-  return {
-    outputUris: [outputUri],
-    outputNames: [outputName],
-    durationMs: Date.now() - startTime,
-    fileSizeBytes: bytes.byteLength,
-  };
-}
 
 function createToolError(code: ToolError['code'], message: string, originalError?: unknown): ToolError {
   return { code, message, originalError };
