@@ -15,7 +15,7 @@ import { pickImages, convertImage } from '@features/image/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import type { FileInfo } from '@utils/fileUtils';
 import type { ImageFormat } from '@features/image/types';
 
@@ -66,8 +66,7 @@ export default function ConvertImageScreen() {
         <ScreenHeader title="Convert Image" />
         <ResultView
           result={processor.result}
-          onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
+          onShare={async (uri) => { void shareFile(uri); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Convert Image"
@@ -95,12 +94,12 @@ export default function ConvertImageScreen() {
 
         {file && (
           <View className="px-2 mt-4">
-            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
-              <Text className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-0.5">Selected Image</Text>
-              <Text className="text-xs text-text-secondary dark:text-text-secondary-dark">{file.name}</Text>
+            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark">
+              <Text className="text-sm font-semibold text-onSurface dark:text-onSurface-dark mb-0.5">Selected Image</Text>
+              <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">{file.name}</Text>
             </Card>
 
-            <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mb-2">Target Format</Text>
+            <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-2">Target Format</Text>
             <View className="flex-row gap-2">
               {FORMATS.map((format) => {
                 if (format === 'webp' && Platform.OS === 'ios') return null;
@@ -109,9 +108,9 @@ export default function ConvertImageScreen() {
                   <Pressable
                     key={format}
                     onPress={() => setTargetFormat(format)}
-                    className={`flex-1 p-3 rounded-md border items-center ${isActive ? 'bg-primary-muted border-primary' : 'bg-surface dark:bg-surface-dark border-border dark:border-border-dark'}`}
+                    className={`flex-1 p-3 rounded-md border items-center ${isActive ? 'bg-primary-muted border-primary' : 'bg-surface dark:bg-surface-dark border-outlineVariant dark:border-outlineVariant-dark'}`}
                   >
-                    <Text className={`text-sm font-bold uppercase ${isActive ? 'text-primary' : 'text-text-primary dark:text-text-primary-dark'}`}>
+                    <Text className={`text-sm font-bold uppercase ${isActive ? 'text-primary' : 'text-onSurface dark:text-onSurface-dark'}`}>
                       {format}
                     </Text>
                   </Pressable>

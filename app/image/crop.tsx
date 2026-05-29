@@ -14,7 +14,7 @@ import { ImagePickerButton } from '@features/image/components/ImagePickerButton'
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import * as ImagePicker from 'expo-image-picker';
 import { getFileInfo, type FileInfo } from '@utils/fileUtils';
 
@@ -62,8 +62,7 @@ export default function CropImageScreen() {
         <ScreenHeader title="Crop Image" />
         <ResultView
           result={processor.result}
-          onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
+          onShare={(uri) => shareFile(uri)}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Crop Image"
@@ -81,7 +80,7 @@ export default function CropImageScreen() {
           description="Open your gallery to select and crop an image"
           onPress={handlePickAndCrop}
         />
-        <Text className="text-xs text-text-tertiary text-center mt-3 px-4">
+        <Text className="text-xs text-outline text-center mt-3 px-4">
           Crops are handled using your device's native editor for the best precision.
         </Text>
       </View>

@@ -20,6 +20,7 @@ module.exports = function (api) {
             '@app-types': './src/types',
             '@hooks': './src/hooks',
             '@design-system': './src/design-system',
+            '@modules': './src/modules',
           },
         },
       ],

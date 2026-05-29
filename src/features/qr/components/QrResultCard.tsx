@@ -10,6 +10,7 @@ import { ExternalLink, Copy, Share2, Phone, Mail, Wifi } from 'lucide-react-nati
 import { Colors } from '@design-system/tokens';
 import { QrData } from '../types';
 import * as Clipboard from 'expo-clipboard';
+import { useTheme } from '@hooks/useTheme';
 
 interface QrResultCardProps {
   data: QrData;
@@ -18,6 +19,7 @@ interface QrResultCardProps {
 }
 
 export function QrResultCard({ data, onClose, onBackToTools }: QrResultCardProps) {
+  const { colors } = useTheme();
   const handleCopy = async () => {
     await Clipboard.setStringAsync(data.value);
   };
@@ -34,11 +36,11 @@ export function QrResultCard({ data, onClose, onBackToTools }: QrResultCardProps
 
   const getIcon = () => {
     switch (data.type) {
-      case 'url': return <ExternalLink size={20} color={Colors.primary} />;
-      case 'phone': return <Phone size={20} color={Colors.primary} />;
-      case 'email': return <Mail size={20} color={Colors.primary} />;
-      case 'wifi': return <Wifi size={20} color={Colors.primary} />;
-      default: return <Copy size={20} color={Colors.primary} />;
+      case 'url': return <ExternalLink size={20} color={colors.primary} />;
+      case 'phone': return <Phone size={20} color={colors.primary} />;
+      case 'email': return <Mail size={20} color={colors.primary} />;
+      case 'wifi': return <Wifi size={20} color={colors.primary} />;
+      default: return <Copy size={20} color={colors.primary} />;
     }
   };
 
@@ -56,20 +58,20 @@ export function QrResultCard({ data, onClose, onBackToTools }: QrResultCardProps
     <View className="px-4 pt-4">
       <Card variant="raised" className="p-4">
         <View className="flex-row items-center mb-3">
-          <View className="w-[40px] h-[40px] rounded-full bg-primary-muted items-center justify-center mr-3">
+          <View className="w-[40px] h-[40px] rounded-full items-center justify-center mr-3" style={{ backgroundColor: `${colors.primary}15` }}>
             {getIcon()}
           </View>
           <View className="flex-1">
-            <Text className="text-xs text-text-tertiary uppercase font-bold tracking-wider">
+            <Text className="text-xs text-outline uppercase font-bold tracking-wider">
               {data.type}
             </Text>
-            <Text className="text-base font-semibold text-text-primary dark:text-text-primary-dark" numberOfLines={1}>
+            <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark" numberOfLines={1}>
               {data.label}
             </Text>
           </View>
         </View>
 
-        <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mb-4 leading-5">
+        <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-4 leading-5">
           {data.value}
         </Text>
 
@@ -88,14 +90,14 @@ export function QrResultCard({ data, onClose, onBackToTools }: QrResultCardProps
               onPress={handleCopy}
               variant="outline"
               className="flex-1"
-              leftIcon={<Copy size={18} color={Colors.textPrimary} />}
+              leftIcon={<Copy size={18} color={colors.onSurface} />}
             />
             <Button
               label="Share"
               onPress={() => Share.share({ message: data.value })}
               variant="outline"
               className="flex-1"
-              leftIcon={<Share2 size={18} color={Colors.textPrimary} />}
+              leftIcon={<Share2 size={18} color={colors.onSurface} />}
             />
           </View>
           <Button

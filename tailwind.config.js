@@ -8,53 +8,66 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Brand
-        primary: {
-          DEFAULT: '#5B5FEF',
-          muted: '#E8E9FF',
-        },
-        // Accent
-        accent: {
-          DEFAULT: '#00C98D',
-          muted: '#D4F7EC',
-        },
-        // Semantic
-        warning: {
-          DEFAULT: '#F59E0B',
-          muted: '#FEF3C7',
-        },
-        error: {
-          DEFAULT: '#EF4444',
-          muted: '#FEE2E2',
-        },
-        info: {
-          DEFAULT: '#3B82F6',
-          muted: '#DBEAFE',
-        },
-        // Neutrals — Light Mode
-        bg: '#F4F5F7',
-        surface: {
-          DEFAULT: '#FFFFFF',
-          raised: '#FAFAFA',
-        },
-        border: {
-          DEFAULT: '#E5E7EB',
-          subtle: '#F3F4F6',
-        },
-        'text-primary': '#0F172A',
-        'text-secondary': '#64748B',
-        'text-tertiary': '#94A3B8',
-        'text-inverse': '#FFFFFF',
-        // Neutrals — Dark Mode
-        'bg-dark': '#0D0F14',
-        'surface-dark': {
-          DEFAULT: '#161A23',
-          raised: '#1E2330',
-        },
-        'border-dark': '#252B38',
-        'text-primary-dark': '#F1F5F9',
-        'text-secondary-dark': '#94A3B8',
-        // Tool Category Colors
+        // Primary
+        primary: '#0061A4',
+        onPrimary: '#FFFFFF',
+        primaryContainer: '#D1E4FF',
+        onPrimaryContainer: '#001D36',
+        'primary-dark': '#9ECAFF',
+        'onPrimary-dark': '#003258',
+        'primaryContainer-dark': '#00497D',
+        'onPrimaryContainer-dark': '#D1E4FF',
+        
+        // Secondary
+        secondary: '#535F70',
+        onSecondary: '#FFFFFF',
+        secondaryContainer: '#D7E3F7',
+        onSecondaryContainer: '#101C2B',
+        'secondary-dark': '#BBC7DB',
+        'onSecondary-dark': '#253140',
+        'secondaryContainer-dark': '#3B4858',
+        'onSecondaryContainer-dark': '#D7E3F7',
+
+        // Tertiary
+        tertiary: '#6B5778',
+        onTertiary: '#FFFFFF',
+        tertiaryContainer: '#F2DAFF',
+        onTertiaryContainer: '#251431',
+        'tertiary-dark': '#D6BEE4',
+        'onTertiary-dark': '#3B2948',
+        'tertiaryContainer-dark': '#523F5F',
+        'onTertiaryContainer-dark': '#F2DAFF',
+
+        // Error
+        error: '#BA1A1A',
+        onError: '#FFFFFF',
+        errorContainer: '#FFDAD6',
+        onErrorContainer: '#410002',
+        'error-dark': '#FFB4AB',
+        'onError-dark': '#690005',
+        'errorContainer-dark': '#93000A',
+        'onErrorContainer-dark': '#FFDAD6',
+
+        // Background & Surface
+        bg: '#FDFBFF',
+        onBg: '#1A1C1E',
+        surface: '#FDFBFF',
+        onSurface: '#1A1C1E',
+        surfaceVariant: '#DFE2E6',
+        onSurfaceVariant: '#43474E',
+        outline: '#73777F',
+        outlineVariant: '#C3C7CF',
+        
+        'bg-dark': '#1A1C1E',
+        'onBg-dark': '#E2E2E6',
+        'surface-dark': '#1A1C1E',
+        'onSurface-dark': '#E2E2E6',
+        'surfaceVariant-dark': '#43474E',
+        'onSurfaceVariant-dark': '#C3C7CF',
+        'outline-dark': '#8D9199',
+        'outlineVariant-dark': '#43474E',
+
+        // Tool Category Colors (Keep these for visual variety if needed, or map to M3)
         tool: {
           pdf: '#EF4444',
           qr: '#8B5CF6',
@@ -80,8 +93,8 @@ module.exports = {
         sm: '8px',
         md: '12px',
         lg: '16px',
-        xl: '20px',
-        '2xl': '24px',
+        xl: '28px',
+        '2xl': '32px',
         full: '9999px',
       },
       fontSize: {

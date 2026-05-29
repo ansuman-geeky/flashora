@@ -26,18 +26,18 @@ export function Divider({
   if (label) {
     return (
       <View className={`flex-row items-center ${SPACING_CLASSES[spacing]} ${className}`} style={style}>
-        <View className="flex-1 h-px bg-border dark:bg-border-dark" />
-        <Text className="px-1.5 text-xs text-text-tertiary dark:text-text-secondary-dark">
+        <View className="flex-1 h-px bg-outlineVariant dark:bg-outlineVariant-dark" />
+        <Text className="px-2 text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">
           {label}
         </Text>
-        <View className="flex-1 h-px bg-border dark:bg-border-dark" />
+        <View className="flex-1 h-px bg-outlineVariant dark:bg-outlineVariant-dark" />
       </View>
     );
   }
 
   return (
     <View
-      className={`h-px bg-border dark:bg-border-dark ${SPACING_CLASSES[spacing]} ${className}`}
+      className={`h-px bg-outlineVariant dark:bg-outlineVariant-dark ${SPACING_CLASSES[spacing]} ${className}`}
       style={style}
     />
   );

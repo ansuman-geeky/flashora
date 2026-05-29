@@ -24,7 +24,7 @@ export function FileList({ files, onRemove }: FileListProps) {
 
   return (
     <View className="px-2 mt-1.5">
-      <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mb-1">
+      <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-1">
         {files.length} file{files.length !== 1 ? 's' : ''} selected
       </Text>
       {files.map((file, index) => (
@@ -33,16 +33,16 @@ export function FileList({ files, onRemove }: FileListProps) {
             <FileText size={18} color={Colors.pdf} />
           </View>
           <View className="flex-1 mr-1">
-            <Text className="text-sm font-medium text-text-primary dark:text-text-primary-dark" numberOfLines={1}>
+            <Text className="text-sm font-medium text-onSurface dark:text-onSurface-dark" numberOfLines={1}>
               {file.name}
             </Text>
-            <Text className="text-xs text-text-tertiary">
+            <Text className="text-xs text-outline">
               {formatFileSize(file.size)}
             </Text>
           </View>
           {onRemove && (
             <IconButton
-              icon={<X size={16} color={colors.textTertiary} />}
+              icon={<X size={16} color={colors.onSurfaceVariant} />}
               onPress={() => onRemove(index)}
               size="sm"
               variant="ghost"

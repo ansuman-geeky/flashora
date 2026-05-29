@@ -38,20 +38,24 @@ export interface CardProps {
   style?: ViewStyle;
   /** Accessibility label for pressable cards */
   accessibilityLabel?: string;
+  /** Long press handler */
+  onLongPress?: PressableProps['onLongPress'];
+  /** Disable press interactions */
+  disabled?: boolean;
 }
 
 /** Background classes by variant */
 const VARIANT_BG_CLASSES: Record<CardVariant, string> = {
-  flat: 'bg-surface dark:bg-surface-dark',
-  raised: 'bg-surface-raised dark:bg-surface-dark-raised',
-  elevated: 'bg-surface dark:bg-surface-dark',
+  flat: 'bg-surfaceVariant dark:bg-surfaceVariant-dark border-transparent', // M3 Filled Card
+  raised: 'bg-surface dark:bg-surface-dark border-outlineVariant dark:border-outlineVariant-dark', // M3 Outlined Card
+  elevated: 'bg-surface dark:bg-surface-dark border-transparent', // M3 Elevated Card
 };
 
-/** Shadow/elevation styles (can't do elevation via NativeWind alone) */
+/** Shadow/elevation styles */
 const VARIANT_SHADOW_STYLES: Record<CardVariant, ViewStyle> = {
   flat: {},
-  raised: { elevation: 2, shadowOpacity: 0.06 },
-  elevated: { elevation: 4, shadowOpacity: 0.08 },
+  raised: {},
+  elevated: { elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 3 },
 };
 
 export function Card({
@@ -61,6 +65,8 @@ export function Card({
   className = '',
   style,
   accessibilityLabel,
+  onLongPress,
+  disabled,
 }: CardProps) {
   const scale = useSharedValue(1);
 
@@ -69,13 +75,13 @@ export function Card({
   }));
 
   const handlePressIn = useCallback(() => {
-    if (onPress) {
+    if (onPress || onLongPress) {
       scale.value = withTiming(0.98, {
         duration: 120,
         easing: Easing.out(Easing.quad),
       });
     }
-  }, [onPress, scale]);
+  }, [onPress, onLongPress, scale]);
 
   const handlePressOut = useCallback(() => {
     scale.value = withTiming(1, {
@@ -85,21 +91,24 @@ export function Card({
   }, [scale]);
 
   const baseClasses = `
-    rounded-md border border-border dark:border-border-dark p-2
+    rounded-xl border p-3
     ${VARIANT_BG_CLASSES[variant]}
     ${className}
   `;
 
   const shadowStyle = VARIANT_SHADOW_STYLES[variant];
 
-  if (onPress) {
+  if (onPress || onLongPress) {
     return (
       <AnimatedPressable
         style={[animatedStyle, shadowStyle, style]}
         className={baseClasses}
         onPress={onPress}
+        onLongPress={onLongPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        disabled={disabled}
+        android_ripple={{ color: 'rgba(150, 150, 150, 0.2)', borderless: false }}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
       >

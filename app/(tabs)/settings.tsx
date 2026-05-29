@@ -52,24 +52,24 @@ function SettingsRow({
       accessibilityLabel={label}
     >
       <View
-        className="w-[36px] h-[36px] rounded-md bg-primary-muted dark:bg-surface-dark items-center justify-center mr-1.5"
-        style={{ backgroundColor: isDark ? Colors.surfaceRaisedDark : Colors.primaryMuted }}
+        className="w-[36px] h-[36px] rounded-md items-center justify-center mr-1.5"
+        style={{ backgroundColor: `${colors.primary}15` }}
       >
         {icon}
       </View>
       <View className="flex-1">
-        <Text className="text-base font-medium text-text-primary dark:text-text-primary-dark">
+        <Text className="text-base font-medium text-onSurface dark:text-onSurface-dark">
           {label}
         </Text>
         {value && (
-          <Text className="text-xs text-text-tertiary dark:text-text-secondary-dark mt-0.5">
+          <Text className="text-xs text-outline dark:text-onSurfaceVariant-dark mt-0.5">
             {value}
           </Text>
         )}
       </View>
       {rightElement ?? (
         onPress ? (
-          <ChevronRight size={20} color={colors.textTertiary} />
+          <ChevronRight size={20} color={colors.onSurfaceVariant} />
         ) : null
       )}
     </Pressable>
@@ -90,7 +90,7 @@ function ThemeSelector() {
   return (
     <View
       className="mx-2 flex-row gap-0.5 rounded-md p-0.5"
-      style={{ backgroundColor: isDark ? Colors.borderDark : Colors.border }}
+      style={{ backgroundColor: colors.outlineVariant }}
     >
       {themes.map(({ mode, icon: Icon, label }) => {
         const isActive = themeMode === mode;
@@ -100,7 +100,7 @@ function ThemeSelector() {
             className={`flex-1 flex-row items-center justify-center py-1.5 rounded-sm`}
             style={{
               backgroundColor: isActive
-                ? isDark ? Colors.surfaceRaisedDark : Colors.surface
+                ? colors.surface
                 : 'transparent',
               elevation: isActive ? 1 : 0,
             }}
@@ -111,14 +111,14 @@ function ThemeSelector() {
           >
             <Icon
               size={14}
-              color={isActive ? Colors.primary : colors.textSecondary}
+              color={isActive ? colors.primary : colors.onSurfaceVariant}
             />
             <Text
               style={{
                 fontSize: 12,
                 marginLeft: 4,
                 fontWeight: isActive ? '600' : '400',
-                color: isActive ? Colors.primary : colors.textSecondary,
+                color: isActive ? colors.primary : colors.onSurfaceVariant,
               }}
             >
               {label}
@@ -145,14 +145,14 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="px-2 pt-2 pb-1.5">
-          <Text className="text-2xl font-bold text-text-primary dark:text-text-primary-dark">
+          <Text className="text-2xl font-bold text-onSurface dark:text-onSurface-dark">
             Settings
           </Text>
         </View>
 
         {/* Theme section */}
         <View className="mb-3">
-          <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark px-2 mb-1">
+          <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark px-2 mb-1">
             APPEARANCE
           </Text>
           <ThemeSelector />
@@ -162,17 +162,10 @@ export default function SettingsScreen() {
 
         {/* General section */}
         <View className="mb-3">
-          <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark px-2 mb-1 mt-1.5">
+          <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark px-2 mb-1 mt-1.5">
             GENERAL
           </Text>
-          <SettingsRow
-            icon={<Star size={18} color={Colors.primary} />}
-            label="Premium"
-            value="Manage your subscription"
-            onPress={() => {
-              router.push('/premium' as never);
-            }}
-          />
+
           <SettingsRow
             icon={<Clock size={18} color={Colors.primary} />}
             label="Recent Activity"
@@ -202,7 +195,7 @@ export default function SettingsScreen() {
             onPress={async () => {
               try {
                 await Share.share({
-                  message: `Download Flashora - Fast, Smart, and Offline-first Utility Hub for Android: https://play.google.com/store/apps/details?id=${APP_CONFIG.packageName}`,
+                  message: `Try Flashora – powerful PDF & Image tools app:\nhttps://play.google.com/store/apps/details?id=${APP_CONFIG.packageName}`,
                 });
               } catch (error) {
                 console.warn('Sharing failed:', error);
@@ -223,7 +216,7 @@ export default function SettingsScreen() {
 
         {/* About section */}
         <View className="mb-3">
-          <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark px-2 mb-1 mt-1.5">
+          <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark px-2 mb-1 mt-1.5">
             ABOUT
           </Text>
           <SettingsRow

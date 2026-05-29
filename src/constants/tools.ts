@@ -15,7 +15,7 @@ export const TOOLS: Tool[] = [
     icon: 'scan-line',
     category: 'scanner',
     color: Colors.scanner,
-    route: '/scanner/camera',
+    route: '/(tabs)/scanner',
     description: 'Scan docs, books & receipts',
     isPremium: false,
   },

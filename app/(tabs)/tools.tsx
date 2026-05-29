@@ -83,10 +83,10 @@ export default function ToolsScreen() {
       style={{ flex: 1, backgroundColor: colors.bg }}
     >
       <View className="px-2 pt-2 pb-1.5">
-        <Text className="text-xl font-bold text-text-primary dark:text-text-primary-dark">
+        <Text className="text-xl font-bold text-onSurface dark:text-onSurface-dark">
           Tools
         </Text>
-        <Text className="text-xs text-text-secondary dark:text-text-secondary-dark mt-0.5">
+        <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5">
           All your utilities in one place
         </Text>
       </View>
@@ -115,7 +115,7 @@ export default function ToolsScreen() {
                         name={tool.name}
                         icon={<Icon size={24} color={tool.color} />}
                         color={tool.color}
-                        isPremium={tool.isPremium}
+
                         onPress={() => handleToolPress(tool)}
                         layout="grid"
                         isFavorite={favorites.includes(tool.id)}

@@ -57,10 +57,10 @@ export function QrGenerator({ value, label, onReset, onBackToTools }: QrGenerato
       </Card>
 
       <View className="mt-4 w-full">
-        <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mb-1 text-center">
+        <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-1 text-center">
           {label ?? 'Generated QR Code'}
         </Text>
-        <Text className="text-xs text-text-tertiary text-center mb-4" numberOfLines={2}>
+        <Text className="text-xs text-outline text-center mb-4" numberOfLines={2}>
           {value}
         </Text>
 

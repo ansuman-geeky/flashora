@@ -19,7 +19,7 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <View className={`flex-row items-center justify-between px-2 mb-1.5 ${className}`} style={style}>
-      <Text className="text-md font-semibold text-text-primary dark:text-text-primary-dark">
+      <Text className="text-md font-semibold text-onSurface dark:text-onSurface-dark">
         {title}
       </Text>
       {action && (

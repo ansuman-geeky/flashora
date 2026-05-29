@@ -36,7 +36,7 @@ const SIZE_CLASSES: Record<IconButtonSize, string> = {
 
 const VARIANT_CLASSES: Record<IconButtonVariant, string> = {
   default: 'bg-transparent',
-  filled: 'bg-primary-muted dark:bg-border-dark',
+  filled: 'bg-primary-muted dark:bg-surfaceVariant-dark',
   ghost: 'bg-transparent',
 };
 

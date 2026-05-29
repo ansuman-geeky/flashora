@@ -2,7 +2,7 @@ import { AD_UNITS, INTERSTITIAL_FREQUENCY, APP_OPEN_AD_COOLDOWN_HOURS } from '@c
 import { logEvent } from './analytics';
 import { recordError } from './crashlytics';
 import { InterstitialAd, RewardedAd, AppOpenAd, AdEventType, RewardedAdEventType } from 'react-native-google-mobile-ads';
-import { usePremiumStore } from '@store/usePremiumStore';
+
 
 /** Ad types supported by Flashora */
 export type AdType = 'app_open' | 'native_banner' | 'interstitial' | 'rewarded';
@@ -20,8 +20,7 @@ let appOpenAd: AppOpenAd | null = null;
  */
 export function loadAndShowAppOpenAd(): void {
   try {
-    const isPremium = usePremiumStore.getState().tier === 'premium';
-    if (isPremium) return;
+
 
     if (!canShowAppOpenAd()) {
       return;
@@ -61,12 +60,8 @@ export function loadAndShowAppOpenAd(): void {
  */
 export function initAds(): void {
   try {
-    const isPremium = usePremiumStore.getState().tier === 'premium';
-    
     // Load App Open Ad on startup
     loadAndShowAppOpenAd();
-
-    if (isPremium) return;
 
     interstitialAd = InterstitialAd.createForAdRequest(AD_UNITS.INTERSTITIAL, {
       requestNonPersonalizedAdsOnly: true,

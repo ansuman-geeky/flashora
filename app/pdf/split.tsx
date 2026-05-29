@@ -10,7 +10,7 @@ import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { ErrorDisplay } from '@components/ErrorDisplay';
 import { FilePickerButton, FileList, ProcessingView, ResultView } from '@features/pdf/components';
-import { pickPdfFiles, splitPdf, shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { pickPdfFiles, splitPdf, shareFile } from '@features/pdf/services';
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@hooks/useTheme';
@@ -47,7 +47,7 @@ export default function PdfSplitScreen() {
         edges={['top']}
       style={{ flex: 1, backgroundColor: colors.bg }}
       >
-        <ScreenHeader title="Split PDF" showBack={false} />
+        <ScreenHeader title="Split PDF" showBack={true} />
         <ProcessingView toolName="Split PDF" progress={processor.progress} />
       </SafeAreaView>
     );
@@ -64,7 +64,6 @@ export default function PdfSplitScreen() {
         <ResultView
           result={processor.result}
           onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Split PDF"

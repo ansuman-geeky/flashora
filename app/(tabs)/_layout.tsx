@@ -34,6 +34,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="files"
+        options={{
+          title: 'Files',
+          tabBarAccessibilityLabel: 'Files tab',
+        }}
+      />
+      <Tabs.Screen
         name="scanner"
         options={{
           title: 'Scanner',

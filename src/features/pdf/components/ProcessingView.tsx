@@ -6,7 +6,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Loader } from 'lucide-react-native';
 import { ProgressBar } from '@components/ProgressBar';
-import { Colors } from '@design-system/tokens';
+import { useTheme } from '@hooks/useTheme';
 
 interface ProcessingViewProps {
   toolName: string;
@@ -15,15 +15,17 @@ interface ProcessingViewProps {
 }
 
 export function ProcessingView({ toolName, progress, message }: ProcessingViewProps) {
+  const { colors } = useTheme();
+
   return (
     <View className="flex-1 items-center justify-center px-4">
-      <View className="w-[64px] h-[64px] rounded-full bg-primary-muted items-center justify-center mb-3">
-        <Loader size={28} color={Colors.primary} />
+      <View className="w-[64px] h-[64px] rounded-full items-center justify-center mb-3" style={{ backgroundColor: `${colors.primary}15` }}>
+        <Loader size={28} color={colors.primary} />
       </View>
-      <Text className="text-lg font-semibold text-text-primary dark:text-text-primary-dark mb-0.5">
+      <Text className="text-lg font-semibold text-onSurface dark:text-onSurface-dark mb-0.5">
         Processing...
       </Text>
-      <Text className="text-sm text-text-secondary dark:text-text-secondary-dark text-center mb-3">
+      <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark text-center mb-3">
         {message ?? `${toolName} in progress. Please wait.`}
       </Text>
       <View className="w-full max-w-[280px]">

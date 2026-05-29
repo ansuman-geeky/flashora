@@ -3,13 +3,14 @@ import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Colors, Shadow } from '@design-system/tokens';
 import { useTheme } from '@hooks/useTheme';
-import { Home, Grid, ScanLine, Settings, LucideIcon } from 'lucide-react-native';
+import { House, Wrench, ScanLine, Settings, Folder, LucideIcon } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 
 const ICON_MAP: Record<string, LucideIcon> = {
-  index: Home,
-  tools: Grid,
+  index: House,
+  tools: Wrench,
+  files: Folder,
   scanner: ScanLine,
   settings: Settings,
 };
@@ -17,6 +18,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 const LABEL_MAP: Record<string, string> = {
   index: 'Home',
   tools: 'Tools',
+  files: 'Files',
   scanner: 'Scanner',
   settings: 'Settings',
 };
@@ -37,9 +39,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     });
 
     if (!event.defaultPrevented) {
-      if (routeName === 'scanner') {
-        router.push('/scanner/camera');
-      } else if (!isFocused) {
+      if (!isFocused) {
         navigation.navigate(routeName);
       }
     }
@@ -51,14 +51,14 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
         styles.container, 
         { 
           backgroundColor: isDark ? colors.surface : colors.bg,
-          borderTopColor: isDark ? colors.border : 'rgba(0,0,0,0.05)',
+          borderTopColor: colors.outlineVariant,
         }
       ]}
     >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]!;
         const isFocused = state.index === index;
-        const Icon = ICON_MAP[route.name] || Home;
+        const Icon = ICON_MAP[route.name] || House;
         const label = LABEL_MAP[route.name] || route.name;
 
         return (
@@ -73,19 +73,19 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           >
             <View style={styles.iconContainer}>
               <Icon 
-                size={24} 
-                color={isFocused ? Colors.primary : (isDark ? colors.textSecondary : colors.textTertiary)} 
+                size={isFocused ? 24 : 22} 
+                color={isFocused ? colors.onSecondaryContainer : colors.onSurfaceVariant} 
                 strokeWidth={isFocused ? 2.5 : 2}
               />
               {isFocused && (
-                <View style={[styles.activeDot, { backgroundColor: Colors.primary }]} />
+                <View style={[styles.activeDot, { backgroundColor: colors.secondaryContainer, zIndex: -1, width: 64, height: 32, borderRadius: 16, bottom: 0 }]} />
               )}
             </View>
             <Text 
               style={[
                 styles.label, 
                 { 
-                  color: isFocused ? Colors.primary : (isDark ? colors.textSecondary : colors.textTertiary),
+                  color: isFocused ? colors.onSurface : colors.onSurfaceVariant,
                   fontWeight: isFocused ? '600' : '500',
                 }
               ]}

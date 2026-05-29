@@ -24,118 +24,109 @@ if (typeof global.TextDecoder === 'undefined') {
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useTheme } from '@hooks/useTheme';
 import mobileAds from 'react-native-google-mobile-ads';
 import { initAds } from '@services/adService';
 import { initRemoteConfig } from '@services/remoteConfig';
+import { SnackbarProvider } from '../src/contexts/SnackbarContext';
+import { View, ActivityIndicator } from 'react-native';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import * as MediaLibrary from 'expo-media-library';
 
 export default function RootLayout() {
   const { isDark } = useTheme();
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        // Initialize AdMob
-        try {
-          await mobileAds().initialize();
-          initAds();
-          console.log('[AdMob] Initialized successfully and pre-loading ads');
-        } catch (adError) {
-          console.warn('[AdMob] Initialization failed:', adError);
-        }
+    // Request storage permissions directly on app launch
+    MediaLibrary.requestPermissionsAsync().then((status) => {
+      console.log('[Permissions] Storage status:', status.status);
+    }).catch(e => console.warn('Permission error', e));
 
-        // Initialize Firebase Remote Config
-        try {
-          await initRemoteConfig();
-          console.log('[RemoteConfig] Initialized successfully');
-        } catch (rcError) {
-          console.warn('[RemoteConfig] Initialization failed:', rcError);
-        }
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
+    // Fire off background services without blocking UI
+    mobileAds().initialize().then(() => {
+      initAds();
+      console.log('[AdMob] Initialized successfully and pre-loading ads');
+    }).catch((adError) => {
+      console.warn('[AdMob] Initialization failed:', adError);
+    });
 
-    prepare();
+    initRemoteConfig().then(() => {
+      console.log('[RemoteConfig] Initialized successfully');
+    }).catch((rcError) => {
+      console.warn('[RemoteConfig] Initialization failed:', rcError);
+    });
+
+    // Immediately unblock the UI so the user doesn't wait 1+ minutes
+    setAppIsReady(true);
   }, []);
 
-  useEffect(() => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately!
-      SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
   if (!appIsReady) {
-    return null;
+    return (
+      <View style={{ flex: 1, backgroundColor: isDark ? '#0D0F14' : '#F4F5F7', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#4A65E6" />
+      </View>
+    );
   }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: 'fade',
-          }}
-        >
-          {/* Tab group — main app */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <SnackbarProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: 'fade',
+            }}
+          >
+            {/* Tab group — main app */}
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          {/* Tool category stacks — pushed on top of tabs */}
-          <Stack.Screen
-            name="pdf"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="qr"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="image"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
+            {/* Tool category stacks — pushed on top of tabs */}
+            <Stack.Screen
+              name="pdf"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="qr"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="image"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
 
-          <Stack.Screen
-            name="scanner"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
+            <Stack.Screen
+              name="scanner"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
 
-          <Stack.Screen
-            name="url-shortener"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="premium"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="activity"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="privacy"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="terms"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-          <Stack.Screen
-            name="about"
-            options={{ headerShown: false, animation: 'slide_from_right' }}
-          />
-        </Stack>
-        <StatusBar style={isDark ? 'light' : 'dark'} />
+            <Stack.Screen
+              name="url-shortener"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+
+            <Stack.Screen
+              name="activity"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="privacy"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="terms"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+              name="about"
+              options={{ headerShown: false, animation: 'slide_from_right' }}
+            />
+          </Stack>
+          <StatusBar style={isDark ? 'light' : 'dark'} />
+        </SnackbarProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

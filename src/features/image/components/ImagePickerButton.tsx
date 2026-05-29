@@ -18,7 +18,7 @@ interface ImagePickerButtonProps {
 }
 
 export function ImagePickerButton({ label, description, onPress, disabled, type = 'gallery' }: ImagePickerButtonProps) {
-  const { isDark } = useTheme();
+  const { isDark, colors } = useTheme();
   const Icon = type === 'camera' ? Camera : ImageIcon;
 
   return (
@@ -30,14 +30,14 @@ export function ImagePickerButton({ label, description, onPress, disabled, type 
     >
       <View
         className="w-[56px] h-[56px] rounded-full items-center justify-center mb-1.5"
-        style={{ backgroundColor: isDark ? Colors.surfaceRaisedDark : Colors.primaryMuted }}
+        style={{ backgroundColor: `${colors.primary}15` }}
       >
-        <Icon size={24} color={Colors.primary} />
+        <Icon size={24} color={colors.primary} />
       </View>
-      <Text className="text-base font-semibold text-text-primary dark:text-text-primary-dark">
+      <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark">
         {label}
       </Text>
-      <Text className="text-sm text-text-secondary dark:text-text-secondary-dark mt-0.5 text-center px-4">
+      <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark mt-0.5 text-center px-4">
         {description}
       </Text>
     </Card>

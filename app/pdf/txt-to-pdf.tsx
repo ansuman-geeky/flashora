@@ -14,7 +14,7 @@ import { converterService } from '@features/converter/services/converterService'
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import * as DocumentPicker from 'expo-document-picker';
 import { getFileInfo, type FileInfo } from '@utils/fileUtils';
 
@@ -66,7 +66,7 @@ export default function TxtToPdfScreen() {
   if (processor.status === 'processing') {
     return (
       <SafeAreaView className="flex-1 bg-bg dark:bg-bg-dark" edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}>
-        <ScreenHeader title="TXT to PDF" showBack={false} />
+        <ScreenHeader title="TXT to PDF" showBack={true} />
         <ProcessingView toolName="Converting Text..." progress={processor.progress} />
       </SafeAreaView>
     );
@@ -79,7 +79,6 @@ export default function TxtToPdfScreen() {
         <ResultView
           result={processor.result}
           onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="TXT to PDF"
@@ -106,9 +105,9 @@ export default function TxtToPdfScreen() {
 
         {file && (
           <View className="px-2 mt-4">
-            <Card variant="flat" className="p-3 mb-6 bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
-              <Text className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-1">Selected File</Text>
-              <Text className="text-xs text-text-secondary dark:text-text-secondary-dark">{file.name}</Text>
+            <Card variant="flat" className="p-3 mb-6 bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark">
+              <Text className="text-sm font-semibold text-onSurface dark:text-onSurface-dark mb-1">Selected File</Text>
+              <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">{file.name}</Text>
             </Card>
 
             <Button label="Convert to PDF" variant="primary" size="lg" fullWidth onPress={handleConvert} />

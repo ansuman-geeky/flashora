@@ -15,7 +15,7 @@ import { pickImages, compressImage } from '@features/image/services'; // compres
 import { useToolProcessor } from '@hooks/useToolProcessor';
 import { useTheme } from '@hooks/useTheme';
 import { useRouter } from 'expo-router';
-import { shareFile, saveToGeneralStorage } from '@features/pdf/services';
+import { shareFile } from '@features/pdf/services';
 import type { FileInfo } from '@utils/fileUtils';
 
 export default function RemoveMetadataScreen() {
@@ -63,8 +63,7 @@ export default function RemoveMetadataScreen() {
         <ScreenHeader title="Remove Metadata" />
         <ResultView
           result={processor.result}
-          onShare={(uri) => { void shareFile(uri); }}
-          onDownload={(uri, name) => { void saveToGeneralStorage(uri, name); }}
+          onShare={async (uri) => { void shareFile(uri); }}
           onBackToTools={() => router.replace('/(tabs)/tools')}
           onProcessAnother={handleReset}
           toolName="Remove Metadata"
@@ -92,9 +91,9 @@ export default function RemoveMetadataScreen() {
 
         {file && (
           <View className="px-2 mt-4">
-            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-border dark:border-border-dark">
-              <Text className="text-sm font-semibold text-text-primary dark:text-text-primary-dark mb-0.5">Selected Image</Text>
-              <Text className="text-xs text-text-secondary dark:text-text-secondary-dark">{file.name}</Text>
+            <Card variant="flat" className="p-2 mb-4 bg-surface dark:bg-surface-dark border border-outlineVariant dark:border-outlineVariant-dark">
+              <Text className="text-sm font-semibold text-onSurface dark:text-onSurface-dark mb-0.5">Selected Image</Text>
+              <Text className="text-xs text-onSurfaceVariant dark:text-onSurfaceVariant-dark">{file.name}</Text>
             </Card>
 
             <View className="p-3 bg-primary-muted rounded-md mb-6 border border-primary/20">

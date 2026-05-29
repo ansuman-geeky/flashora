@@ -47,32 +47,32 @@ export function Input({
   const hasError = Boolean(error);
   const isDisabled = !editable;
 
-  let borderClass = 'border-border dark:border-border-dark';
-  if (hasError) borderClass = 'border-error';
-  else if (isFocused) borderClass = 'border-primary';
+  let borderClass = 'border-outline dark:border-outline-dark';
+  if (hasError) borderClass = 'border-error dark:border-error-dark border-2';
+  else if (isFocused) borderClass = 'border-primary dark:border-primary-dark border-2';
 
   const bgClass = isDisabled
-    ? 'bg-border-subtle dark:bg-border-dark'
+    ? 'bg-surfaceVariant/50 dark:bg-surfaceVariant-dark/50'
     : variant === 'search'
-      ? 'bg-surface-raised dark:bg-surface-dark-raised'
+      ? 'bg-surfaceVariant dark:bg-surfaceVariant-dark'
       : 'bg-surface dark:bg-surface-dark';
 
   const textColorClass = isDisabled
-    ? 'text-text-tertiary'
-    : 'text-text-primary dark:text-text-primary-dark';
+    ? 'text-onSurface/38 dark:text-onSurface-dark/38'
+    : 'text-onSurface dark:text-onSurface-dark';
 
   return (
     <View className={`${fullWidth ? 'w-full' : ''} ${className}`} style={style}>
       {label && (
-        <Text className={`text-sm font-medium mb-0.5 ${hasError ? 'text-error' : 'text-text-primary dark:text-text-primary-dark'}`}>
+        <Text className={`text-sm font-medium mb-1 ${hasError ? 'text-error dark:text-error-dark' : isFocused ? 'text-primary dark:text-primary-dark' : 'text-onSurfaceVariant dark:text-onSurfaceVariant-dark'}`}>
           {label}
         </Text>
       )}
-      <View className={`flex-row items-center border rounded-md ${borderClass} ${bgClass} ${multiline ? 'min-h-[100px] items-start' : 'h-[44px]'} px-1.5`}>
-        {leftIcon && <View className="mr-1">{leftIcon}</View>}
+      <View className={`flex-row items-center border rounded-md ${borderClass} ${bgClass} ${multiline ? 'min-h-[120px] items-start' : 'h-[56px]'} px-3`}>
+        {leftIcon && <View className="mr-2">{leftIcon}</View>}
         <TextInput
-          className={`flex-1 text-base ${textColorClass} ${multiline ? 'py-1.5' : ''} ${inputClassName}`}
-          placeholderTextColor="#94A3B8"
+          className={`flex-1 text-base ${textColorClass} ${multiline ? 'py-3' : ''} ${inputClassName}`}
+          placeholderTextColor="#73777F"
           editable={editable}
           multiline={multiline}
           textAlignVertical={multiline ? 'top' : 'center'}
@@ -85,7 +85,7 @@ export function Input({
         {rightIcon && <View className="ml-1">{rightIcon}</View>}
       </View>
       {(error ?? helperText) && (
-        <Text className={`text-xs mt-0.5 ${hasError ? 'text-error' : 'text-text-tertiary dark:text-text-secondary-dark'}`}
+        <Text className={`text-xs mt-0.5 ${hasError ? 'text-error' : 'text-outline dark:text-onSurfaceVariant-dark'}`}
           accessibilityRole={hasError ? 'alert' : undefined}>
           {error ?? helperText}
         </Text>

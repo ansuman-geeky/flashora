@@ -86,7 +86,7 @@ export default function QrGenerateScreen() {
         />
       ) : (
         <ScrollView className="flex-1 px-4 pt-2">
-          <Text className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark mb-2">
+          <Text className="text-sm font-medium text-onSurfaceVariant dark:text-onSurfaceVariant-dark mb-2">
             Select Type
           </Text>
 
@@ -101,13 +101,13 @@ export default function QrGenerateScreen() {
                   className={`flex-row items-center px-3 py-2 rounded-full border ${
                     isSelected
                       ? 'bg-primary border-primary'
-                      : 'bg-surface dark:bg-surface-dark border-border dark:border-border-dark'
+                      : 'bg-surface dark:bg-surface-dark border-outlineVariant dark:border-outlineVariant-dark'
                   }`}
                 >
-                  <Icon size={16} color={isSelected ? '#FFFFFF' : Colors.textSecondary} />
+                  <Icon size={16} color={isSelected ? '#FFFFFF' : colors.onSurfaceVariant} />
                   <Text
                     className={`ml-1.5 text-sm font-medium ${
-                      isSelected ? 'text-white' : 'text-text-secondary dark:text-text-secondary-dark'
+                      isSelected ? 'text-white' : 'text-onSurfaceVariant dark:text-onSurfaceVariant-dark'
                     }`}
                   >
                     {item.label}

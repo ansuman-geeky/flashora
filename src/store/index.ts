@@ -8,5 +8,4 @@ export type { AppState, ThemeMode } from './useAppStore';
 export { useHistoryStore } from './useHistoryStore';
 export type { HistoryState } from './useHistoryStore';
 
-export { usePremiumStore } from './usePremiumStore';
-export type { PremiumStoreState } from './usePremiumStore';
+
