@@ -59,7 +59,10 @@ export interface ErrorDisplayProps {
 export function ErrorDisplay({
   errorCode, onRetry, onDismiss, className = '', style,
 }: ErrorDisplayProps) {
-  const errorInfo = ERROR_MESSAGES[errorCode];
+  const errorInfo = ERROR_MESSAGES[errorCode] || {
+    title: 'Processing Failed',
+    description: `An unexpected error occurred (${errorCode}). Please try again.`
+  };
   const router = useRouter();
 
   return (
@@ -76,12 +79,7 @@ export function ErrorDisplay({
       </Text>
       <View className="flex-row mt-2 gap-1.5">
         {errorCode === 'PREMIUM_REQUIRED' ? (
-          <Button 
-            label="Go Premium" 
-            variant="primary" 
-            size="sm" 
-            onPress={() => router.push('/(tabs)/premium')} 
-          />
+          <Button label="Upgrade to Premium" variant="primary" onPress={() => router.push('/(tabs)/premium' as any)} />
         ) : (
           onRetry && (
             <Button label="Try Again" variant="outline" size="sm" onPress={onRetry} />

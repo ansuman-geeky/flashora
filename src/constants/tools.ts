@@ -82,6 +82,36 @@ export const TOOLS: Tool[] = [
     description: 'Add password protection to a PDF',
     isPremium: true,
   },
+  {
+    id: 'pdf_unlock',
+    name: 'Unlock PDF',
+    icon: 'unlock',
+    category: 'pdf',
+    color: Colors.pdf,
+    route: '/pdf/unlock',
+    description: 'Remove password protection from a PDF',
+    isPremium: true,
+  },
+  {
+    id: 'pdf_sign',
+    name: 'Sign PDF',
+    icon: 'pen-tool',
+    category: 'pdf',
+    color: Colors.pdf,
+    route: '/pdf/sign',
+    description: 'Draw or upload a signature to sign a PDF',
+    isPremium: false,
+  },
+  {
+    id: 'pdf_watermark',
+    name: 'Add Watermark',
+    icon: 'baseline',
+    category: 'pdf',
+    color: Colors.pdf,
+    route: '/pdf/watermark',
+    description: 'Add custom text or image watermarks',
+    isPremium: false,
+  },
 
   // --- QR Tools ---
   {

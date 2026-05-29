@@ -15,6 +15,9 @@ export {
   imagesToPdf,
   reorderPdf,
   passwordProtectPdf,
+  unlockPdf,
+  signPdf,
+  watermarkPdf,
   shareFile,
   ensureLocalUri,
 } from './pdfService';

@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { View, Text } from 'react-native';
-import { CheckCircle, Share2, RotateCcw } from 'lucide-react-native';
+import { CheckCircle, Share2, RotateCcw, Download } from 'lucide-react-native';
 import { Button } from '@components/Button';
 import { Card } from '@components/Card';
 import { useTheme } from '@hooks/useTheme';
@@ -14,7 +14,7 @@ import { formatFileSize, formatDuration } from '@utils/formatters';
 import type { ToolResult } from '@app-types/tool';
 import { useRouter } from 'expo-router';
 import * as IntentLauncher from 'expo-intent-launcher';
-import { Platform } from 'react-native';
+import { Platform, NativeModules } from 'react-native';
 
 import { useSnackbar } from '../../../contexts/SnackbarContext';
 
@@ -114,11 +114,11 @@ export function ResultView({ result, onShare, onBackToTools, onProcessAnother, t
               if (result.outputUris[0]) {
                 try {
                   if (Platform.OS === 'android') {
-                    const { NativeModules } = require('react-native');
-                    if (NativeModules.StorageModule && NativeModules.StorageModule.openFile) {
-                      let mimeType = 'application/pdf';
-                      if (result.outputNames[0]?.endsWith('.jpg')) mimeType = 'image/jpeg';
-                      await NativeModules.StorageModule.openFile(result.outputUris[0], mimeType);
+                    const { StorageModule } = NativeModules;
+                    if (StorageModule && StorageModule.openFile) {
+                      const ext = result.outputNames[0]?.split('.').pop()?.toLowerCase();
+                      let mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'application/pdf';
+                      await StorageModule.openFile(result.outputUris[0], mimeType);
                     } else {
                       await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
                         data: result.outputUris[0],
@@ -140,8 +140,27 @@ export function ResultView({ result, onShare, onBackToTools, onProcessAnother, t
           variant="outline"
           size="lg"
           fullWidth
-          onPress={() => {
-            showSnackbar('Saved to Downloads/Flashora', 'success', { label: 'View', onPress: () => router.push('/(tabs)/files' as any) });
+          leftIcon={<Download size={20} color={colors.primary} />}
+          onPress={async () => {
+            try {
+              const { StorageModule } = NativeModules;
+              if (StorageModule && StorageModule.copyFileToDownloads) {
+                for (let i = 0; i < result.outputUris.length; i++) {
+                  const uri = result.outputUris[i];
+                  const name = result.outputNames[i] ?? `output_${i}.pdf`;
+                  const ext = name.split('.').pop()?.toLowerCase();
+                  const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'application/pdf';
+                  if (uri) await StorageModule.copyFileToDownloads(uri, name, mimeType);
+                }
+              } else {
+                if (result.outputUris[0]) {
+                  await onShare(result.outputUris[0]);
+                }
+              }
+              showSnackbar('Saved to Downloads/Flashora', 'success', { label: 'View', onPress: () => router.push('/(tabs)/files' as any) });
+            } catch (e) {
+              showSnackbar('Could not save file', 'error');
+            }
           }}
         />
         <Button

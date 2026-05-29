@@ -23,6 +23,7 @@ import { saveToFlashora } from '../../../services/storageService';
 import { SUPPORTED_FORMATS, FILE_LIMITS } from '@constants/config';
 import type { ToolError, ToolResult } from '@app-types/tool';
 import type { CompressionQuality } from '../types';
+import { PdfProcessorModule } from '../../../native/PdfProcessor';
 
 /**
  * Pick PDF files using the document picker.
@@ -241,8 +242,6 @@ export async function splitPdf(file: FileInfo, pages: number[]): Promise<ToolRes
   }
 }
 
-import { PdfProcessorModule } from '../../../native/PdfProcessor';
-
 /**
  * Compress a PDF using Native Bridge (Optimizes internal structure).
  */
@@ -406,6 +405,121 @@ export async function shareFile(uri: string): Promise<void> {
     if (isToolError(error)) throw error;
     recordError(error, 'pdfService.shareFile');
     throw createToolError('PROCESSING_FAILED', 'Failed to share file', error);
+  }
+}
+
+/**
+ * Unlock PDF (Remove password) using Native Bridge.
+ */
+export async function unlockPdf(file: FileInfo, password: string): Promise<ToolResult> {
+  const startTime = Date.now();
+  let localUri = file.uri;
+  try {
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available on this platform.');
+    }
+
+    localUri = await ensureLocalUri(file.uri);
+    const outputPath = await PdfProcessorModule.decryptPdf(localUri, password);
+    const outputUri = `file://${outputPath}`;
+    const fileInfo = await FileSystem.getInfoAsync(outputUri);
+
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'unlocked', '.pdf');
+
+    if (localUri !== file.uri) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    }
+
+    return {
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: savedFile.size,
+    };
+  } catch (error) {
+    console.error('[pdfService] unlockPdf error:', error);
+    if (isToolError(error)) throw error;
+    recordError(error, 'pdfService.unlockPdf');
+    throw createToolError('PROCESSING_FAILED', 'Failed to unlock PDF. Make sure the password is correct.', error);
+  }
+}
+
+
+
+/**
+ * Sign a PDF using pdf-lib in Javascript.
+ */
+export async function signPdf(file: FileInfo, signatureUri: string, pageIndex: number, x: number, y: number, width: number, height: number): Promise<ToolResult> {
+  const startTime = Date.now();
+  let localUri = file.uri;
+  try {
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available on this platform.');
+    }
+
+    localUri = await ensureLocalUri(file.uri);
+    const sigLocalUri = await ensureLocalUri(signatureUri);
+    
+    const outputPath = await PdfProcessorModule.signPdf(localUri, sigLocalUri, pageIndex, x, y, width, height);
+    const outputUri = `file://${outputPath}`;
+    
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'signed', '.pdf');
+
+    if (localUri !== file.uri) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    }
+
+    return {
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: savedFile.size,
+    };
+  } catch (error) {
+    console.error('[pdfService] signPdf error:', error);
+    if (isToolError(error)) throw error;
+    recordError(error, 'pdfService.signPdf');
+    throw createToolError('PROCESSING_FAILED', 'Failed to sign PDF.', error);
+  }
+}
+
+/**
+ * Add a watermark to a PDF using pdf-lib in Javascript.
+ */
+export async function watermarkPdf(file: FileInfo, text: string, imageUri: string | null, opacity: number, fontSize: number): Promise<ToolResult> {
+  const startTime = Date.now();
+  let localUri = file.uri;
+  try {
+    if (!PdfProcessorModule) {
+      throw createToolError('PROCESSING_FAILED', 'Native PDF processor is not available on this platform.');
+    }
+
+    localUri = await ensureLocalUri(file.uri);
+    let imgLocalUri = null;
+    if (imageUri) {
+      imgLocalUri = await ensureLocalUri(imageUri);
+    }
+    
+    const outputPath = await PdfProcessorModule.watermarkPdf(localUri, text, imgLocalUri, opacity, fontSize);
+    const outputUri = `file://${outputPath}`;
+    
+    const savedFile = await saveToFlashora(outputUri, 'PDF', 'watermark', '.pdf');
+
+    if (localUri !== file.uri) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true }).catch(() => {});
+    }
+
+    return {
+      outputUris: [savedFile.uri],
+      outputNames: [savedFile.name],
+      durationMs: Date.now() - startTime,
+      fileSizeBytes: savedFile.size,
+    };
+  } catch (error) {
+    console.error('[pdfService] watermarkPdf error:', error);
+    if (isToolError(error)) throw error;
+    recordError(error, 'pdfService.watermarkPdf');
+    throw createToolError('PROCESSING_FAILED', 'Failed to add watermark.', error);
   }
 }
 
