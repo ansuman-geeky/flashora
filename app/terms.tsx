@@ -38,23 +38,14 @@ export default function TermsConditionsScreen() {
         <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark leading-5 mb-4">
           Flashora grants you a personal, non-exclusive, non-transferable, revocable license to use the app for personal or professional utilities. You agree not to use the application to process illegal materials, violate the rights of others, or engage in malicious behavior.
         </Text>
-
         <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark mt-2 mb-1.5">
-          3. Subscriptions & Payments
-        </Text>
-        <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark leading-5 mb-4">
-          Flashora offers optional Premium tier features. Subscriptions are billed monthly or annually and processed securely via Google Play Billing. You can manage and cancel your subscriptions at any time through your Google Play Store Account settings.
-        </Text>
-
-        <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark mt-2 mb-1.5">
-          4. Disclaimer of Warranties
+          3. Disclaimer of Warranties
         </Text>
         <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark leading-5 mb-4">
           Flashora is provided "as is" and "as available" without warranties of any kind, either express or implied. Since all processing runs locally on your device hardware, we cannot guarantee performance speeds or document accuracy for damaged/unreadable input files.
         </Text>
-
         <Text className="text-base font-semibold text-onSurface dark:text-onSurface-dark mt-2 mb-1.5">
-          5. Contact Support
+          4. Contact Support
         </Text>
         <Text className="text-sm text-onSurfaceVariant dark:text-onSurfaceVariant-dark leading-5 mb-2">
           For payment inquiries, licensing questions, or terms feedback, please reach out to us at:

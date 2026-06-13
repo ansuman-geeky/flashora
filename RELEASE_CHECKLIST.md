@@ -90,8 +90,38 @@ Run a quick pass on each core utility:
 
 Technical checks before generating the final production `.aab`:
 
-- [ ] **Check package.json Version**: Ensure `version` and `android.versionCode` in `app.json` / `app.config.ts` are incremented.
-- [ ] **EAS Secrets**: Verify that AdMob production IDs and Firebase keys are configured in EAS secrets.
-- [ ] **Strict Typecheck**: Run `npm run typecheck` to guarantee no TS errors exist.
-- [ ] **Lint Checks**: Run `npm run lint` to enforce style and syntax rules.
-- [ ] **Production Env Check**: Ensure the build configuration uses real keys instead of Test IDs.
+- [ ] **Version Bump**: Ensure `version` (e.g., `1.0.1`) and `android.versionCode` (e.g., `2`) in `app.config.ts` and `package.json` are incremented from the previous release.
+- [ ] **Environment Variables & Secrets**:
+  - Verify that AdMob **production IDs** are configured in `app.config.ts` or EAS secrets.
+  - Verify that Firebase `google-services.json` is the production version and is securely accessible during the build.
+- [ ] **Remove Debug/Dev Permissions**: Check `android/app/src/main/AndroidManifest.xml` and ensure permissions like `SYSTEM_ALERT_WINDOW` or `RECORD_AUDIO` are removed if not strictly required in production (Play Store may flag these).
+- [ ] **Code Quality**:
+  - Run `npm run typecheck` to guarantee no TypeScript errors exist.
+  - Run `npm run lint` to enforce style and syntax rules.
+- [ ] **ProGuard & Minification**: Ensure `minifyEnabled enableProguardInReleaseBuilds` is set correctly in `android/app/build.gradle` if relying on ProGuard, or ensure the EAS `production` profile handles minification.
+
+---
+
+## 8. Google Play Console Listing & Policy Checklist
+
+Check these Play Store specific requirements before uploading your bundle:
+
+- [ ] **App Icon**: Ensure the Store Icon is high-res (512x512) and `assets/adaptive-icon.png` meets Google's design guidelines.
+- [ ] **Store Assets**:
+  - Feature Graphic (1024x500).
+  - Screenshots for Phone (and 7-inch/10-inch tablets if supported).
+  - App Short Description (up to 80 chars) and Long Description (up to 4000 chars) are updated for the new features.
+- [ ] **Data Safety Form**:
+  - Update the Data Safety section in the Play Console to declare data collected by Firebase Analytics, Crashlytics (Crash logs), and AdMob (Device IDs for advertising).
+- [ ] **Privacy Policy**: Ensure a valid, accessible Privacy Policy URL is linked in the Play Console (required for apps requesting Camera and Storage permissions).
+- [ ] **Advertising ID Declaration**: Check the "Advertising ID" section in Play Console and declare that your app uses it (AdMob requires this).
+- [ ] **App Content Declarations**: Verify Target Audience (e.g., 13+ or 18+), News App status, and Data Safety in the Play Console.
+
+---
+
+## 9. Final Build & Upload Validation
+
+- [ ] **Generate Production AAB**: Run `npm run build:android` (which maps to `eas build --platform android --profile production`) to generate the Android App Bundle (`.aab`).
+- [ ] **App Signing Setup**: Ensure the build is signed with the correct production upload Keystore (EAS handles this if configured, verify via `eas credentials`).
+- [ ] **Pre-Launch Report**: Upload the AAB to the "Internal Testing" or "Closed Testing" track first and review the automated Pre-launch report for crashes or accessibility issues on various devices.
+- [ ] **Final App Bundle Smoke Test**: Download the app from the internal track via Play Console to a physical device and do one last smoke test (to verify ProGuard/R8 didn't break UI/logic).

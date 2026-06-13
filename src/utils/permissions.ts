@@ -30,17 +30,21 @@ export async function requestCameraPermission(): Promise<PermissionResult> {
   return { granted: true, canAskAgain: true };
 }
 
+import * as MediaLibrary from 'expo-media-library';
+
 /**
  * Request media library permission (save to gallery).
  *
- * Implementation will use expo-media-library's requestPermissionsAsync.
+ * Implementation uses expo-media-library's requestPermissionsAsync.
  */
 export async function requestMediaLibraryPermission(): Promise<PermissionResult> {
-  // Will be implemented with expo-media-library in later steps
-  if (__DEV__) {
-    console.log('[Permissions] Media library permission requested');
+  try {
+    const permission = await MediaLibrary.requestPermissionsAsync();
+    return { granted: permission.granted, canAskAgain: permission.canAskAgain };
+  } catch (error) {
+    console.error('[Permissions] Media library permission error:', error);
+    return { granted: false, canAskAgain: true };
   }
-  return { granted: true, canAskAgain: true };
 }
 
 /**

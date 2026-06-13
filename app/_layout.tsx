@@ -33,18 +33,12 @@ import { initRemoteConfig } from '@services/remoteConfig';
 import { SnackbarProvider } from '../src/contexts/SnackbarContext';
 import { View, ActivityIndicator } from 'react-native';
 
-import * as MediaLibrary from 'expo-media-library';
 
 export default function RootLayout() {
   const { isDark } = useTheme();
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    // Request storage permissions directly on app launch
-    MediaLibrary.requestPermissionsAsync().then((status) => {
-      console.log('[Permissions] Storage status:', status.status);
-    }).catch(e => console.warn('Permission error', e));
-
     // Fire off background services without blocking UI
     mobileAds().initialize().then(() => {
       initAds();

@@ -30,7 +30,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import { useScannerHistory } from '../store/useScannerHistory';
 import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
+
 import { useSnackbar } from '../../../contexts/SnackbarContext';
 import { logEvent } from '@services/analytics';
 import { useTheme } from '@hooks/useTheme';
